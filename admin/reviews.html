@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Review Moderation | Rock & Stone Admin</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <style>
+    .admin-layout { display: flex; min-height: 100vh; background: var(--cream-100); }
+    .admin-sidebar { width: 260px; background: var(--pine-900); color: #fff; padding: 24px 20px; display: flex; flex-direction: column; flex-shrink: 0; }
+    .admin-main { flex-grow: 1; padding: 36px 40px; overflow-y: auto; }
+    .admin-nav { list-style: none; display: flex; flex-direction: column; gap: 6px; margin-top: 32px; flex-grow: 1; }
+    .admin-nav a { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: var(--radius-md); color: rgba(250, 247, 240, 0.75); font-weight: 600; font-size: 0.95rem; }
+    .admin-nav a:hover, .admin-nav a.active { background: rgba(255, 255, 255, 0.12); color: #ffffff; }
+    .admin-nav a.active { border-left: 4px solid var(--gold-500); }
+    .review-mod-card { background: #ffffff; border-radius: var(--radius-lg); padding: 24px; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); margin-bottom: 18px; }
+  </style>
+</head>
+<body>
+
+  <div class="admin-layout">
+    
+    <aside class="admin-sidebar">
+      <div class="brand-link" style="color: #fff;">
+        <div class="brand-logo-mark" style="background: var(--gold-500); color: var(--pine-900);">R&amp;S</div>
+        <div class="brand-info">
+          <span class="brand-title" style="color: #fff; font-size: 1.15rem;">Rock &amp; Stone</span>
+          <span class="brand-sub" style="color: var(--gold-500);">Management Suite</span>
+        </div>
+      </div>
+
+      <ul class="admin-nav">
+        <li><a href="index.html">📊 Overview Dashboard</a></li>
+        <li><a href="kitchen.html">🍲 Live Kitchen KDS</a></li>
+        <li><a href="menu.html">📋 Menu Management</a></li>
+        <li><a href="reservations.html">📅 Table Bookings</a></li>
+        <li><a href="reviews.html" class="active">⭐ Review Moderation</a></li>
+        <li><a href="settings.html">⚙️ Restaurant Settings</a></li>
+      </ul>
+    </aside>
+
+    <main class="admin-main">
+      <div style="margin-bottom: 28px;">
+        <h1 style="font-size: 1.8rem; color: var(--pine-900);">Customer Review Moderation</h1>
+        <p style="font-size: 0.92rem; color: var(--stone-600);">Approve genuine customer experiences and eliminate spam before publishing.</p>
+      </div>
+
+      <div id="reviews-queue-container">
+        <!-- Rendered via JS -->
+      </div>
+    </main>
+
+  </div>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    function renderReviewQueue() {
+      const container = document.getElementById('reviews-queue-container');
+      let reviews = JSON.parse(localStorage.getItem('rs_reviews_db') || '[]');
+
+      if (reviews.length === 0) {
+        container.innerHTML = `
+          <div style="background: #fff; padding: 40px; border-radius: var(--radius-lg); text-align: center; color: var(--stone-500);">
+            <div style="font-size: 2.5rem; margin-bottom: 10px;">✨</div>
+            <h3>Moderation Queue Empty</h3>
+            <p>All submitted reviews have been evaluated.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = reviews.map((rev, idx) => `
+        <div class="review-mod-card">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+            <div>
+              <strong style="font-size: 1.1rem; color: var(--stone-900);">${rev.author}</strong>
+              <span style="font-size: 0.8rem; color: var(--stone-500); display: block;">Ref/Phone: ${rev.ref || 'Guest'} &bull; ${new Date(rev.created_at).toLocaleDateString()}</span>
+            </div>
+            <div style="color: #f5a623; font-size: 1.1rem;">
+              ${'★'.repeat(rev.rating)}${'☆'.repeat(5 - rev.rating)}
+            </div>
+          </div>
+
+          <p style="color: var(--stone-700); font-size: 0.95rem; margin-bottom: 16px; background: var(--cream-100); padding: 12px; border-radius: var(--radius-sm);">
+            "${rev.text}"
+          </p>
+
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: var(--radius-full); ${
+              rev.moderation_status === 'APPROVED' ? 'background: #d4edda; color: #155724;' :
+              rev.moderation_status === 'REJECTED' ? 'background: #f8d7da; color: #721c24;' : 'background: #fff3cd; color: #856404;'
+            }">
+              STATUS: ${rev.moderation_status}
+            </span>
+
+            <div style="display: flex; gap: 10px;">
+              ${rev.moderation_status !== 'APPROVED' ? `
+                <button class="btn btn-secondary btn-sm" onclick="moderateReview(${idx}, 'APPROVED')">✓ Approve &amp; Publish</button>
+              ` : ''}
+              ${rev.moderation_status !== 'REJECTED' ? `
+                <button class="btn btn-outline btn-sm" style="color: #c85a32;" onclick="moderateReview(${idx}, 'REJECTED')">✗ Reject Spam</button>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function moderateReview(idx, status) {
+      let reviews = JSON.parse(localStorage.getItem('rs_reviews_db') || '[]');
+      reviews[idx].moderation_status = status;
+      localStorage.setItem('rs_reviews_db', JSON.stringify(reviews));
+      ROCK_STONE.showToast(`Review ${status.toLowerCase()}`, 'success');
+      renderReviewQueue();
+    }
+
+    document.addEventListener('DOMContentLoaded', renderReviewQueue);
+  </script>
+</body>
+</html>
