@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pure Vegetarian Menu | Rock & Stone Restaurant, Kangra</title>
+  <meta name="description" content="Explore the authentic 100% Pure Vegetarian menu of Rock & Stone Restaurant. Traditional Himachali Dham dishes, clay tandoori paneer, rich dals, and artisanal breads.">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <style>
+    .menu-filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 32px;
+      justify-content: center;
+    }
+    .filter-btn {
+      background: #ffffff;
+      border: 1.5px solid var(--border-medium);
+      padding: 10px 20px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: var(--stone-700);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--pine-700);
+      color: #ffffff;
+      border-color: var(--pine-700);
+    }
+    .search-input-wrapper {
+      max-width: 500px;
+      margin: 0 auto 36px;
+      position: relative;
+    }
+    .search-input {
+      width: 100%;
+      padding: 14px 20px 14px 46px;
+      border-radius: var(--radius-full);
+      border: 1.5px solid var(--border-medium);
+      font-size: 1rem;
+      background: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+    .search-icon {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--stone-400);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <div style="background: var(--pine-900); color: var(--gold-500); padding: 8px 16px; font-size: 0.82rem; font-weight: 700; text-align: center;">
+    🌿 Strictly 100% Pure Vegetarian Kitchen &bull; FSSAI Lic. 10925004000220
+  </div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="index.html" class="brand-link">
+        <div class="brand-logo-mark">R&amp;S</div>
+        <div class="brand-info">
+          <span class="brand-title">Rock &amp; Stone</span>
+          <span class="brand-sub">Pure Veg Himalayan</span>
+        </div>
+      </a>
+
+      <nav class="nav-desktop">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="menu.html" class="nav-link active">Pure Veg Menu</a>
+        <a href="story.html" class="nav-link">Our Story</a>
+        <a href="reservations.html" class="nav-link">Table Booking</a>
+        <a href="gallery.html" class="nav-link">Gallery</a>
+        <a href="reviews.html" class="nav-link">Reviews</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="veg-cert-pill">
+          <div class="pure-veg-icon"></div>
+          <span>Pure Veg</span>
+        </div>
+
+        <button class="cart-btn-header" aria-label="Open Shopping Cart">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+          </svg>
+          <span class="cart-badge" style="display: none;">0</span>
+        </button>
+
+        <a href="reservations.html" class="btn btn-primary btn-sm">Reserve Table</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Header -->
+  <section style="background: var(--pine-900); color: #fff; padding: 60px 0 50px; text-align: center; position: relative;">
+    <div class="container">
+      <span class="section-subtitle" style="color: var(--gold-500);">Authentic Himalayan Culinary Heritage</span>
+      <h1 style="color: #fff; margin-bottom: 14px;">100% Pure Vegetarian Menu</h1>
+      <p style="color: rgba(250,247,240,0.85); max-width: 600px; margin: 0 auto;">
+        Prepared fresh upon order with mountain desi ghee, organic whole spices, and farm-fresh ingredients. Completely free of eggs, meat, or animal derivatives.
+      </p>
+    </div>
+  </section>
+
+  <!-- Menu Content Section -->
+  <section class="section">
+    <div class="container">
+      
+      <!-- Live Search -->
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="menu-search-input" class="search-input" placeholder="Search approved pure vegetarian dishes...">
+      </div>
+
+      <!-- Category Filter Tabs -->
+      <div class="menu-filter-bar" id="category-filter-bar">
+        <button class="filter-btn active" data-category="all">All Dishes</button>
+        <button class="filter-btn" data-category="Himachali Specialties">🏔️ Himachali Specialties</button>
+        <button class="filter-btn" data-category="Tandoor & Starters">🔥 Tandoor &amp; Starters</button>
+        <button class="filter-btn" data-category="Main Course">🍛 Main Course</button>
+        <button class="filter-btn" data-category="Breads">🫓 Breads</button>
+        <button class="filter-btn" data-category="Beverages">☕ Beverages</button>
+      </div>
+
+      <!-- Menu Items Grid -->
+      <div class="grid-3" id="menu-grid">
+        <!-- Rendered via JS -->
+      </div>
+
+      <!-- Owner Menu Notice -->
+      <div style="margin-top: 60px; background: var(--cream-200); border: 1.5px dashed var(--border-medium); padding: 24px; border-radius: var(--radius-lg); text-align: center;">
+        <h4 style="font-size: 1.1rem; color: var(--pine-800); margin-bottom: 6px;">📋 Verified Restaurant Menu Guarantee</h4>
+        <p style="font-size: 0.9rem; color: var(--stone-600); max-width: 680px; margin: 0 auto;">
+          All dishes shown are strictly pure vegetarian. In production, this menu syncs live with the restaurant database configured via our secure Admin Menu Manager. No unapproved ingredients are ever introduced.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-col">
+          <div class="brand-link" style="margin-bottom: 16px;">
+            <div class="brand-logo-mark" style="background: #fff; color: var(--pine-900);">R&amp;S</div>
+            <div class="brand-info">
+              <span class="brand-title" style="color: #fff;">Rock &amp; Stone</span>
+              <span class="brand-sub" style="color: var(--gold-500);">100% Pure Vegetarian</span>
+            </div>
+          </div>
+          <p style="font-size: 0.92rem; color: rgba(250, 247, 240, 0.75);">
+            Strictly pure vegetarian mountain culinary experience in Tatal, Nurpur, Kangra.
+          </p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="menu.html">Pure Veg Menu</a></li>
+            <li><a href="reservations.html">Table Booking</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal Information</h4>
+          <ul class="footer-links">
+            <li><a href="legal/privacy-policy.html">Privacy Policy</a></li>
+            <li><a href="legal/terms.html">Terms &amp; Conditions</a></li>
+            <li><a href="legal/refund-policy.html">Refund Policy</a></li>
+            <li><a href="admin/login.html" style="color: var(--gold-500);">Staff Portal</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Certifications</h4>
+          <div class="legal-badge-card">
+            <div class="legal-badge-item"><span>FSSAI License:</span> <strong>10925004000220</strong></div>
+            <div class="legal-badge-item"><span>GSTIN:</span> <strong>02DKLPP2797H1ZR</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>&copy; 2026 Rock &amp; Stone Restaurant. 100% Pure Vegetarian.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const grid = document.getElementById('menu-grid');
+      const searchInput = document.getElementById('menu-search-input');
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      let currentCategory = 'all';
+
+      function renderMenu(items) {
+        if (items.length === 0) {
+          grid.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
+              <div style="font-size: 3rem;">🔍</div>
+              <h3 style="margin-top: 12px;">No pure vegetarian dishes match your search</h3>
+              <p>Try searching for Paneer, Madra, Dal, Tandoori, or browse our categories.</p>
+            </div>
+          `;
+          return;
+        }
+
+        grid.innerHTML = items.map(dish => `
+          <div class="food-card">
+            <div class="food-card-img-wrapper">
+              <img src="${dish.image}" alt="${dish.name}" class="food-card-img" loading="lazy">
+              <span class="food-tag-badge">${dish.category}</span>
+            </div>
+            <div class="food-card-body">
+              <div class="food-card-header">
+                <h3 class="food-card-title">${dish.name}</h3>
+                <div class="veg-indicator" title="100% Pure Vegetarian"><div class="veg-box"><div class="veg-circle"></div></div></div>
+              </div>
+              <p class="food-card-desc">${dish.description}</p>
+              <div style="display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap;">
+                ${dish.dietary.map(d => `<span style="background: var(--cream-200); font-size: 0.72rem; font-weight: 700; color: var(--stone-700); padding: 2px 8px; border-radius: var(--radius-full);">${d}</span>`).join('')}
+              </div>
+              <div class="food-card-footer">
+                <div class="food-price"><span class="food-price-currency">₹</span>${dish.price}</div>
+                <button class="btn btn-secondary btn-sm" onclick="ROCK_STONE.cart.addItem(${JSON.stringify(dish).replace(/"/g, '&quot;')})">
+                  Add to Cart +
+                </button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      function filterAndRender() {
+        const query = searchInput.value.toLowerCase().trim();
+        const filtered = ROCK_STONE.MENU.filter(dish => {
+          const matchCat = currentCategory === 'all' || dish.category === currentCategory;
+          const matchQuery = !query || dish.name.toLowerCase().includes(query) || dish.description.toLowerCase().includes(query);
+          return matchCat && matchQuery && dish.is_pure_veg;
+        });
+        renderMenu(filtered);
+      }
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentCategory = btn.dataset.category;
+          filterAndRender();
+        });
+      });
+
+      searchInput.addEventListener('input', filterAndRender);
+
+      // Initial render
+      renderMenu(ROCK_STONE.MENU);
+    });
+  </script>
+</body>
+</html>
