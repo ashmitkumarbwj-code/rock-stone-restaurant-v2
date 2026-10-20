@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Table Reservations Manager | Rock & Stone Admin</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <style>
+    .admin-layout { display: flex; min-height: 100vh; background: var(--cream-100); }
+    .admin-sidebar { width: 260px; background: var(--pine-900); color: #fff; padding: 24px 20px; display: flex; flex-direction: column; flex-shrink: 0; }
+    .admin-main { flex-grow: 1; padding: 36px 40px; overflow-y: auto; }
+    .admin-nav { list-style: none; display: flex; flex-direction: column; gap: 6px; margin-top: 32px; flex-grow: 1; }
+    .admin-nav a { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: var(--radius-md); color: rgba(250, 247, 240, 0.75); font-weight: 600; font-size: 0.95rem; }
+    .admin-nav a:hover, .admin-nav a.active { background: rgba(255, 255, 255, 0.12); color: #ffffff; }
+    .admin-nav a.active { border-left: 4px solid var(--gold-500); }
+    .card { background: #ffffff; border-radius: var(--radius-lg); padding: 28px; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); }
+  </style>
+</head>
+<body>
+
+  <div class="admin-layout">
+    
+    <aside class="admin-sidebar">
+      <div class="brand-link" style="color: #fff;">
+        <div class="brand-logo-mark" style="background: var(--gold-500); color: var(--pine-900);">R&amp;S</div>
+        <div class="brand-info">
+          <span class="brand-title" style="color: #fff; font-size: 1.15rem;">Rock &amp; Stone</span>
+          <span class="brand-sub" style="color: var(--gold-500);">Management Suite</span>
+        </div>
+      </div>
+
+      <ul class="admin-nav">
+        <li><a href="index.html">📊 Overview Dashboard</a></li>
+        <li><a href="kitchen.html">🍲 Live Kitchen KDS</a></li>
+        <li><a href="menu.html">📋 Menu Management</a></li>
+        <li><a href="reservations.html" class="active">📅 Table Bookings</a></li>
+        <li><a href="reviews.html">⭐ Review Moderation</a></li>
+        <li><a href="settings.html">⚙️ Restaurant Settings</a></li>
+      </ul>
+    </aside>
+
+    <main class="admin-main">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px;">
+        <div>
+          <h1 style="font-size: 1.8rem; color: var(--pine-900);">Table Reservations Manager</h1>
+          <p style="font-size: 0.92rem; color: var(--stone-600);">Review guest bookings, allocate tables, and send WhatsApp confirmations.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.92rem; text-align: left;">
+            <thead>
+              <tr style="background: var(--cream-200); border-bottom: 2px solid var(--border-medium);">
+                <th style="padding: 12px;">Ref No</th>
+                <th style="padding: 12px;">Guest Details</th>
+                <th style="padding: 12px;">Date &amp; Time</th>
+                <th style="padding: 12px;">Party Size</th>
+                <th style="padding: 12px;">Special Requests</th>
+                <th style="padding: 12px;">Status</th>
+                <th style="padding: 12px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="res-tbody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    function loadReservations() {
+      const tbody = document.getElementById('res-tbody');
+      let resList = JSON.parse(localStorage.getItem('rs_reservations_db') || '[]');
+
+      if (resList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 30px; color: var(--stone-500);">No reservations yet.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = resList.map((r, idx) => `
+        <tr style="border-bottom: 1px solid var(--border-light);">
+          <td style="padding: 12px;"><strong>${r.ref_no}</strong></td>
+          <td style="padding: 12px;">${r.customer_name}<br><small style="color: var(--stone-500);">${r.phone}</small></td>
+          <td style="padding: 12px;">${r.date}<br><small style="color: var(--stone-600);">${r.time}</small></td>
+          <td style="padding: 12px;">${r.guest_count} Guests (${r.occasion || 'Casual'})</td>
+          <td style="padding: 12px; max-width: 200px; font-size: 0.82rem; color: var(--stone-600);">${r.special_requests || 'None'}</td>
+          <td style="padding: 12px;">
+            <span style="font-weight: 700; font-size: 0.75rem; padding: 4px 8px; border-radius: var(--radius-full); ${
+              r.status === 'CONFIRMED' ? 'background:#d4edda; color:#155724;' :
+              r.status === 'REJECTED' ? 'background:#f8d7da; color:#721c24;' : 'background:#fff3cd; color:#856404;'
+            }">
+              ${r.status}
+            </span>
+          </td>
+          <td style="padding: 12px;">
+            ${r.status === 'PENDING' ? `
+              <button class="btn btn-secondary btn-sm" style="padding: 4px 8px; font-size: 0.78rem;" onclick="updateResStatus(${idx}, 'CONFIRMED')">Confirm</button>
+              <button class="btn btn-outline btn-sm" style="padding: 4px 8px; font-size: 0.78rem; color: #c85a32;" onclick="updateResStatus(${idx}, 'REJECTED')">Reject</button>
+            ` : `
+              <span style="font-size: 0.8rem; color: var(--stone-400);">Action Completed</span>
+            `}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function updateResStatus(idx, newStatus) {
+      let resList = JSON.parse(localStorage.getItem('rs_reservations_db') || '[]');
+      resList[idx].status = newStatus;
+      localStorage.setItem('rs_reservations_db', JSON.stringify(resList));
+      ROCK_STONE.showToast(`Reservation marked ${newStatus}`, 'success');
+      loadReservations();
+    }
+
+    document.addEventListener('DOMContentLoaded', loadReservations);
+  </script>
+</body>
+</html>
