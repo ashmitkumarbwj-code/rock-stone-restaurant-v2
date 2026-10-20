@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant Settings | Rock & Stone Admin</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <style>
+    .admin-layout { display: flex; min-height: 100vh; background: var(--cream-100); }
+    .admin-sidebar { width: 260px; background: var(--pine-900); color: #fff; padding: 24px 20px; display: flex; flex-direction: column; flex-shrink: 0; }
+    .admin-main { flex-grow: 1; padding: 36px 40px; overflow-y: auto; }
+    .admin-nav { list-style: none; display: flex; flex-direction: column; gap: 6px; margin-top: 32px; flex-grow: 1; }
+    .admin-nav a { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: var(--radius-md); color: rgba(250, 247, 240, 0.75); font-weight: 600; font-size: 0.95rem; }
+    .admin-nav a:hover, .admin-nav a.active { background: rgba(255, 255, 255, 0.12); color: #ffffff; }
+    .admin-nav a.active { border-left: 4px solid var(--gold-500); }
+    .settings-card { background: #ffffff; border-radius: var(--radius-lg); padding: 32px; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); margin-bottom: 24px; }
+  </style>
+</head>
+<body>
+
+  <div class="admin-layout">
+    
+    <aside class="admin-sidebar">
+      <div class="brand-link" style="color: #fff;">
+        <div class="brand-logo-mark" style="background: var(--gold-500); color: var(--pine-900);">R&amp;S</div>
+        <div class="brand-info">
+          <span class="brand-title" style="color: #fff; font-size: 1.15rem;">Rock &amp; Stone</span>
+          <span class="brand-sub" style="color: var(--gold-500);">Management Suite</span>
+        </div>
+      </div>
+
+      <ul class="admin-nav">
+        <li><a href="index.html">📊 Overview Dashboard</a></li>
+        <li><a href="kitchen.html">🍲 Live Kitchen KDS</a></li>
+        <li><a href="menu.html">📋 Menu Management</a></li>
+        <li><a href="reservations.html">📅 Table Bookings</a></li>
+        <li><a href="reviews.html">⭐ Review Moderation</a></li>
+        <li><a href="settings.html" class="active">⚙️ Restaurant Settings</a></li>
+      </ul>
+    </aside>
+
+    <main class="admin-main">
+      <div style="margin-bottom: 28px;">
+        <h1 style="font-size: 1.8rem; color: var(--pine-900);">Restaurant Configuration &amp; Legal Settings</h1>
+        <p style="font-size: 0.92rem; color: var(--stone-600);">Authorized controls for business details, hours, delivery charges, and legal registrations.</p>
+      </div>
+
+      <form id="settings-form" onsubmit="handleSettingsSave(event)">
+        <!-- Business Identity -->
+        <div class="settings-card">
+          <h3 style="font-size: 1.3rem; margin-bottom: 20px; color: var(--pine-900);">Business Profile &amp; Contact Information</h3>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label class="form-label">Restaurant Trade Name</label>
+              <input type="text" id="set-name" class="form-control" value="Rock & Stone Restaurant" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Primary Contact Phone</label>
+              <input type="tel" id="set-phone" class="form-control" value="+91 76781 29577" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Official Email Address</label>
+            <input type="email" id="set-email" class="form-control" value="ashmitkumarbwj@gmail.com" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Registered Physical Address</label>
+            <textarea id="set-address" class="form-control" rows="2" required>V.P.O. Tatal, Near Indian Oil Petrol Pump, P/O Khel, Tehsil Nurpur, Kangra, Himachal Pradesh 176205</textarea>
+          </div>
+        </div>
+
+        <!-- Statutory Licenses -->
+        <div class="settings-card">
+          <h3 style="font-size: 1.3rem; margin-bottom: 20px; color: var(--pine-900);">Statutory Licences &amp; Purity Certification</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label class="form-label">FSSAI Food Safety Licence Number</label>
+              <input type="text" id="set-fssai" class="form-control" value="10925004000220" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">GSTIN (Goods &amp; Services Tax Number)</label>
+              <input type="text" id="set-gstin" class="form-control" value="02DKLPP2797H1ZR" required>
+            </div>
+          </div>
+
+          <div style="background: var(--pure-veg-bg); border: 1.5px solid var(--pure-veg-green); padding: 14px 18px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 10px;">
+            <div class="pure-veg-icon" style="width: 20px; height: 20px;"></div>
+            <div style="font-size: 0.88rem; color: var(--stone-800);">
+              <strong>100% Pure Vegetarian Status:</strong> Locked to ACTIVE. Non-vegetarian dishes cannot be added.
+            </div>
+          </div>
+        </div>
+
+        <!-- Operating Hours & Delivery Controls -->
+        <div class="settings-card">
+          <h3 style="font-size: 1.3rem; margin-bottom: 20px; color: var(--pine-900);">Hours &amp; Delivery Parameters</h3>
+          
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+            <div class="form-group">
+              <label class="form-label">Opening Time</label>
+              <input type="text" id="set-open" class="form-control" value="10:00 AM">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Closing Time</label>
+              <input type="text" id="set-close" class="form-control" value="10:30 PM">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Dine-in Order Cutoff</label>
+              <input type="text" id="set-cutoff" class="form-control" value="10:00 PM">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+            <div class="form-group">
+              <label class="form-label">Restaurant GST Rate (%)</label>
+              <input type="number" id="set-gst" class="form-control" value="5.0" step="0.5">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Delivery Fee (₹)</label>
+              <input type="number" id="set-delivery-fee" class="form-control" value="40">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Eco-Packaging Fee (₹)</label>
+              <input type="number" id="set-pack-fee" class="form-control" value="25">
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-lg" style="margin-top: 10px;">
+            Save Settings &amp; Update System &rarr;
+          </button>
+        </div>
+      </form>
+    </main>
+
+  </div>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    function handleSettingsSave(e) {
+      e.preventDefault();
+      const settings = {
+        name: document.getElementById('set-name').value.trim(),
+        phone: document.getElementById('set-phone').value.trim(),
+        email: document.getElementById('set-email').value.trim(),
+        address: document.getElementById('set-address').value.trim(),
+        fssai: document.getElementById('set-fssai').value.trim(),
+        gstin: document.getElementById('set-gstin').value.trim(),
+        hours_open: document.getElementById('set-open').value.trim(),
+        hours_close: document.getElementById('set-close').value.trim(),
+        dine_in_cutoff: document.getElementById('set-cutoff').value.trim(),
+        gst_percent: parseFloat(document.getElementById('set-gst').value),
+        delivery_fee: parseFloat(document.getElementById('set-delivery-fee').value),
+        packaging_fee: parseFloat(document.getElementById('set-pack-fee').value),
+        updated_at: new Date().toISOString()
+      };
+
+      localStorage.setItem('rs_settings_db', JSON.stringify(settings));
+      ROCK_STONE.showToast('Restaurant settings successfully saved!', 'success');
+    }
+  </script>
+</body>
+</html>
