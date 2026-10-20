@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Order Tracking | Rock & Stone Restaurant (Pure Veg)</title>
+  <link rel="stylesheet" href="assets/css/main.css">
+  <style>
+    .tracking-card {
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <div style="background: var(--pine-900); color: var(--gold-500); padding: 8px 16px; font-size: 0.82rem; font-weight: 700; text-align: center;">
+    🌿 100% Pure Vegetarian Kitchen &bull; Live Kitchen Order Tracking
+  </div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="index.html" class="brand-link">
+        <div class="brand-logo-mark">R&amp;S</div>
+        <div class="brand-info">
+          <span class="brand-title">Rock &amp; Stone</span>
+          <span class="brand-sub">Pure Veg Himalayan</span>
+        </div>
+      </a>
+
+      <nav class="nav-desktop">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="menu.html" class="nav-link">Pure Veg Menu</a>
+        <a href="reservations.html" class="nav-link">Table Booking</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="veg-cert-pill">
+          <div class="pure-veg-icon"></div>
+          <span>Pure Veg</span>
+        </div>
+        <button class="cart-btn-header" aria-label="Open Shopping Cart">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+          </svg>
+          <span class="cart-badge" style="display: none;">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tracking Page Header -->
+  <section style="background: var(--pine-900); color: #fff; padding: 50px 0 40px; text-align: center;">
+    <div class="container">
+      <span class="section-subtitle" style="color: var(--gold-500);">Real-Time Kitchen Status</span>
+      <h1 style="color: #fff; margin-bottom: 8px;">Order Tracking Status</h1>
+      <p style="color: rgba(250,247,240,0.85);">Watch your pure vegetarian feast progress from clay tandoor to table.</p>
+    </div>
+  </section>
+
+  <!-- Tracking Container -->
+  <section class="section">
+    <div class="container" style="max-width: 860px;">
+      
+      <!-- Search order box if no order query -->
+      <div style="display: flex; gap: 12px; margin-bottom: 30px;">
+        <input type="text" id="input-search-order" class="form-control" placeholder="Enter Order Number (e.g. RS-20261020-8492)">
+        <button class="btn btn-primary" onclick="lookupOrder()">Track</button>
+      </div>
+
+      <!-- Main Tracking Card -->
+      <div class="tracking-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; border-bottom: 1px solid var(--border-light); padding-bottom: 20px; margin-bottom: 28px;">
+          <div>
+            <span style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--stone-500); font-weight: 700;">Order Reference</span>
+            <h2 id="track-order-id" style="font-size: 1.6rem; color: var(--pine-900);">RS-20261020-8492</h2>
+          </div>
+          <div style="text-align: right;">
+            <span style="font-size: 0.85rem; color: var(--stone-500); display: block;">Service Mode</span>
+            <strong id="track-order-type" style="background: var(--cream-200); padding: 4px 12px; border-radius: var(--radius-full); font-size: 0.88rem; color: var(--stone-800);">DINE-IN</strong>
+          </div>
+        </div>
+
+        <!-- Visual Stepper -->
+        <div class="stepper-container">
+          <div class="stepper-line"></div>
+          <div class="stepper-progress" id="track-progress-bar" style="width: 50%;"></div>
+
+          <div class="step-item completed" id="step-1">
+            <div class="step-bubble">1</div>
+            <div class="step-label">Order Placed</div>
+          </div>
+          <div class="step-item completed" id="step-2">
+            <div class="step-bubble">2</div>
+            <div class="step-label">Accepted</div>
+          </div>
+          <div class="step-item active" id="step-3">
+            <div class="step-bubble">3</div>
+            <div class="step-label">In Kitchen</div>
+          </div>
+          <div class="step-item" id="step-4">
+            <div class="step-bubble">4</div>
+            <div class="step-label">Ready / Dispatched</div>
+          </div>
+          <div class="step-item" id="step-5">
+            <div class="step-bubble">5</div>
+            <div class="step-label">Completed</div>
+          </div>
+        </div>
+
+        <!-- Current Status Banner -->
+        <div id="status-alert-box" style="background: var(--pine-100); border: 1.5px solid var(--pine-500); border-radius: var(--radius-md); padding: 18px 22px; display: flex; align-items: center; gap: 16px; margin: 32px 0;">
+          <div style="font-size: 2rem;">🍲</div>
+          <div>
+            <h4 id="status-title" style="color: var(--pine-900); font-size: 1.1rem; margin-bottom: 2px;">Preparing in Kitchen</h4>
+            <p id="status-desc" style="font-size: 0.88rem; color: var(--stone-700); margin: 0;">Our chefs are preparing your fresh vegetarian dishes with authentic Himalayan spices.</p>
+          </div>
+        </div>
+
+        <!-- Order Summary Details -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding-top: 20px; border-top: 1px solid var(--border-light);">
+          <div>
+            <h4 style="font-size: 1rem; margin-bottom: 10px; color: var(--stone-800);">Order Details</h4>
+            <div id="track-order-items" style="font-size: 0.9rem; color: var(--stone-700);">
+              <!-- Items dynamic list -->
+            </div>
+          </div>
+          <div>
+            <h4 style="font-size: 1rem; margin-bottom: 10px; color: var(--stone-800);">Restaurant Assistance</h4>
+            <p style="font-size: 0.88rem; color: var(--stone-600); margin-bottom: 12px;">Need adjustments or questions about your order? Contact the restaurant counter directly:</p>
+            <a href="tel:+917678129577" class="btn btn-secondary btn-sm" style="width: 100%; text-align: center;">
+              📞 Call Counter: +91 76781 29577
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>&copy; 2026 Rock &amp; Stone Restaurant &bull; 100% Pure Vegetarian</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    function updateTrackingUI(order) {
+      document.getElementById('track-order-id').textContent = order.order_number;
+      document.getElementById('track-order-type').textContent = order.order_type;
+
+      // Status mapping
+      const stages = ['PENDING', 'ACCEPTED', 'PREPARING', 'READY', 'COMPLETED'];
+      const currentIdx = Math.max(0, stages.indexOf(order.order_status));
+
+      // Stepper UI
+      stages.forEach((st, idx) => {
+        const stepEl = document.getElementById(`step-${idx + 1}`);
+        if (!stepEl) return;
+        stepEl.classList.remove('completed', 'active');
+        if (idx < currentIdx) {
+          stepEl.classList.add('completed');
+        } else if (idx === currentIdx) {
+          stepEl.classList.add('active');
+        }
+      });
+
+      const progressPercent = (currentIdx / (stages.length - 1)) * 100;
+      document.getElementById('track-progress-bar').style.width = `${progressPercent}%`;
+
+      const statusTitle = document.getElementById('status-title');
+      const statusDesc = document.getElementById('status-desc');
+
+      if (order.order_status === 'PENDING') {
+        statusTitle.textContent = 'Order Placed & Awaiting Confirmation';
+        statusDesc.textContent = 'Order has been sent to our kitchen counter for confirmation.';
+      } else if (order.order_status === 'ACCEPTED') {
+        statusTitle.textContent = 'Order Accepted';
+        statusDesc.textContent = 'Restaurant staff has verified and scheduled your order.';
+      } else if (order.order_status === 'PREPARING') {
+        statusTitle.textContent = 'Preparing in Pure Veg Kitchen';
+        statusDesc.textContent = 'Our tandoor and chefs are actively crafting your dishes.';
+      } else if (order.order_status === 'READY') {
+        statusTitle.textContent = 'Order is Ready!';
+        statusDesc.textContent = order.order_type === 'DELIVERY' ? 'Dispatched with delivery rider.' : 'Ready for service at your table / pickup counter!';
+      } else if (order.order_status === 'COMPLETED') {
+        statusTitle.textContent = 'Order Completed & Fulfilled';
+        statusDesc.textContent = 'Thank you for dining with Rock & Stone! Enjoy your meal.';
+      }
+
+      // Render items
+      const itemsContainer = document.getElementById('track-order-items');
+      if (order.items && order.items.length > 0) {
+        itemsContainer.innerHTML = order.items.map(i => `
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <span>${i.quantity}&times; ${i.name}</span>
+            <strong>₹${i.line_total}</strong>
+          </div>
+        `).join('') + `
+          <div style="border-top: 1px dashed var(--border-medium); margin-top: 8px; padding-top: 8px; font-weight: 800; display: flex; justify-content: space-between;">
+            <span>Total:</span>
+            <span>₹${order.total_amount}</span>
+          </div>
+        `;
+      }
+    }
+
+    function lookupOrder() {
+      const input = document.getElementById('input-search-order').value.trim();
+      if (!input) return;
+
+      const stored = JSON.parse(localStorage.getItem('rs_orders_db') || '[]');
+      const found = stored.find(o => o.order_number.toLowerCase() === input.toLowerCase());
+      if (found) {
+        updateTrackingUI(found);
+      } else {
+        ROCK_STONE.showToast('Order not found. Please verify order ID.', 'error');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const orderNum = urlParams.get('order_number');
+      const stored = JSON.parse(localStorage.getItem('rs_orders_db') || '[]');
+
+      let activeOrder = null;
+      if (orderNum) {
+        activeOrder = stored.find(o => o.order_number === orderNum);
+      }
+      if (!activeOrder && stored.length > 0) {
+        activeOrder = stored[0];
+      }
+
+      if (!activeOrder) {
+        // Fallback demo order
+        activeOrder = {
+          order_number: orderNum || 'RS-20261020-8492',
+          order_type: 'DINE_IN',
+          order_status: 'PREPARING',
+          total_amount: 588,
+          items: [
+            { name: 'Kangra Madra', quantity: 1, line_total: 280 },
+            { name: 'Dal Dhauladhar', quantity: 1, line_total: 260 }
+          ]
+        };
+      }
+
+      updateTrackingUI(activeOrder);
+    });
+  </script>
+</body>
+</html>
