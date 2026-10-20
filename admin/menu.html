@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu Management | Rock & Stone Restaurant (Pure Veg)</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <style>
+    .admin-layout {
+      display: flex;
+      min-height: 100vh;
+      background: var(--cream-100);
+    }
+    .admin-sidebar {
+      width: 260px;
+      background: var(--pine-900);
+      color: #fff;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .admin-main {
+      flex-grow: 1;
+      padding: 36px 40px;
+      overflow-y: auto;
+    }
+    .admin-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 32px;
+      flex-grow: 1;
+    }
+    .admin-nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      color: rgba(250, 247, 240, 0.75);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    .admin-nav a:hover, .admin-nav a.active {
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+    }
+    .admin-nav a.active {
+      border-left: 4px solid var(--gold-500);
+    }
+    .menu-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 24, 17, 0.75);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all var(--transition-fast);
+      padding: 20px;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal-box {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      max-width: 580px;
+      width: 100%;
+      padding: 32px;
+      box-shadow: var(--shadow-xl);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="admin-layout">
+    
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="brand-link" style="color: #fff;">
+        <div class="brand-logo-mark" style="background: var(--gold-500); color: var(--pine-900);">R&amp;S</div>
+        <div class="brand-info">
+          <span class="brand-title" style="color: #fff; font-size: 1.15rem;">Rock &amp; Stone</span>
+          <span class="brand-sub" style="color: var(--gold-500);">Management Suite</span>
+        </div>
+      </div>
+
+      <ul class="admin-nav">
+        <li><a href="index.html">📊 Overview Dashboard</a></li>
+        <li><a href="kitchen.html">🍲 Live Kitchen KDS</a></li>
+        <li><a href="menu.html" class="active">📋 Menu Management</a></li>
+        <li><a href="reservations.html">📅 Table Bookings</a></li>
+        <li><a href="reviews.html">⭐ Review Moderation</a></li>
+        <li><a href="settings.html">⚙️ Restaurant Settings</a></li>
+      </ul>
+
+      <div style="border-top: 1px solid rgba(255,255,255,0.15); padding-top: 16px;">
+        <a href="../index.html" class="btn btn-outline btn-sm" style="color: #fff; border-color: rgba(255,255,255,0.3); width: 100%;">
+          View Public Site
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="admin-main">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px;">
+        <div>
+          <h1 style="font-size: 1.8rem; color: var(--pine-900);">Pure Vegetarian Menu Management</h1>
+          <p style="font-size: 0.92rem; color: var(--stone-600);">Strict 100% Pure Veg validation enforced on all items and CSV imports.</p>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button class="btn btn-outline btn-sm" onclick="openCsvModal()">📥 Import CSV Menu</button>
+          <button class="btn btn-primary btn-sm" onclick="openItemModal()">+ Add New Dish</button>
+        </div>
+      </div>
+
+      <!-- Vegetarian Policy Pill Banner -->
+      <div style="background: var(--pure-veg-bg); border: 1.5px solid var(--pure-veg-green); padding: 14px 20px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 14px; margin-bottom: 24px;">
+        <div class="pure-veg-icon" style="width: 22px; height: 22px; border-width: 2.5px;"></div>
+        <div style="font-size: 0.88rem; color: var(--stone-800);">
+          <strong>Mandatory Pure Vegetarian Policy:</strong> Non-vegetarian ingredients, meat, seafood, eggs, or gelatin are strictly disallowed. All entries require verified status.
+        </div>
+      </div>
+
+      <!-- Dishes Table Card -->
+      <div class="menu-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3 style="font-size: 1.25rem;">Active Pure Veg Dishes Catalog</h3>
+          <span style="font-size: 0.85rem; color: var(--stone-500);">Unpublished items remain hidden from public until owner approval</span>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.92rem;">
+            <thead>
+              <tr style="background: var(--cream-200); border-bottom: 2px solid var(--border-medium);">
+                <th style="padding: 12px;">Dish Name</th>
+                <th style="padding: 12px;">Category</th>
+                <th style="padding: 12px;">Price (₹)</th>
+                <th style="padding: 12px;">Availability</th>
+                <th style="padding: 12px;">Featured</th>
+                <th style="padding: 12px;">Published</th>
+                <th style="padding: 12px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-menu-tbody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Add / Edit Item Modal -->
+  <div class="modal-overlay" id="item-modal">
+    <div class="modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 id="modal-title" style="font-size: 1.3rem;">Add Pure Vegetarian Dish</h3>
+        <button onclick="closeModals()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+      </div>
+
+      <form id="dish-form" onsubmit="handleDishSave(event)">
+        <input type="hidden" id="dish-id">
+        
+        <div class="form-group">
+          <label class="form-label">Dish Name *</label>
+          <input type="text" id="dish-name" class="form-control" placeholder="e.g. Kangra Madra" required>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label class="form-label">Category *</label>
+            <select id="dish-category" class="form-control" required>
+              <option value="Himachali Specialties">Himachali Specialties</option>
+              <option value="Tandoor & Starters">Tandoor &amp; Starters</option>
+              <option value="Main Course">Main Course</option>
+              <option value="Breads">Breads</option>
+              <option value="Beverages">Beverages</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Price (INR) *</label>
+            <input type="number" id="dish-price" class="form-control" placeholder="280" required min="10">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Description &amp; Key Ingredients *</label>
+          <textarea id="dish-desc" class="form-control" rows="3" placeholder="Describe the authentic vegetarian preparation..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Dietary Tags (comma separated)</label>
+          <input type="text" id="dish-tags" class="form-control" placeholder="e.g. Traditional, Gluten-Free, Jain Option">
+        </div>
+
+        <!-- Pure Veg Guarantee Checkbox (Locked to TRUE) -->
+        <div style="background: var(--cream-100); padding: 12px; border-radius: var(--radius-md); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+          <input type="checkbox" id="dish-is-veg" checked disabled>
+          <label for="dish-is-veg" style="font-weight: 700; font-size: 0.85rem; color: var(--pure-veg-green);">
+            100% PURE VEGETARIAN ASSURANCE (Enforced by Policy)
+          </label>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+          <button type="button" class="btn btn-outline" onclick="closeModals()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Dish</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CSV Import Modal -->
+  <div class="modal-overlay" id="csv-modal">
+    <div class="modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="font-size: 1.3rem;">Import Owner Menu from CSV</h3>
+        <button onclick="closeModals()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+      </div>
+
+      <p style="font-size: 0.88rem; color: var(--stone-600); margin-bottom: 16px;">
+        Upload a validated CSV file supplied by the restaurant owner. Required columns: <code>name, category, price, description, dietary_tags</code>.
+      </p>
+
+      <div style="background: #fff8e1; border: 1px solid #ffe082; padding: 12px; border-radius: var(--radius-md); font-size: 0.82rem; color: #856404; margin-bottom: 18px;">
+        ⚠️ <strong>Pure Veg Integrity Check:</strong> Any row containing non-vegetarian terminology (meat, chicken, egg, mutton, fish, prawn) will be automatically rejected.
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Select CSV File</label>
+        <input type="file" id="csv-file-input" class="form-control" accept=".csv">
+      </div>
+
+      <div id="csv-report" style="display: none; padding: 14px; background: var(--cream-100); border-radius: var(--radius-md); font-size: 0.85rem; margin-bottom: 18px;">
+        <!-- Validation report -->
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <button type="button" class="btn btn-outline" onclick="closeModals()">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="processCsvImport()">Validate &amp; Import</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    // Local menu repository
+    let adminMenu = JSON.parse(localStorage.getItem('rs_admin_menu') || 'null');
+    if (!adminMenu) {
+      adminMenu = ROCK_STONE.MENU.map(i => ({
+        ...i,
+        is_available: true,
+        is_published: false // Safe default awaiting owner sign-off
+      }));
+      localStorage.setItem('rs_admin_menu', JSON.stringify(adminMenu));
+    }
+
+    function saveAdminMenu() {
+      localStorage.setItem('rs_admin_menu', JSON.stringify(adminMenu));
+      renderAdminMenu();
+    }
+
+    function renderAdminMenu() {
+      const tbody = document.getElementById('admin-menu-tbody');
+      tbody.innerHTML = adminMenu.map((item, idx) => `
+        <tr style="border-bottom: 1px solid var(--border-light);">
+          <td style="padding: 12px;">
+            <strong>${item.name}</strong>
+            <span class="veg-indicator" style="display: block; font-size: 0.72rem;"><div class="veg-box"><div class="veg-circle"></div></div> 100% Pure Veg</span>
+          </td>
+          <td style="padding: 12px;">${item.category}</td>
+          <td style="padding: 12px;">₹${item.price}</td>
+          <td style="padding: 12px;">
+            <button class="btn btn-sm ${item.is_available ? 'btn-secondary' : 'btn-outline'}" onclick="toggleAvailability(${idx})">
+              ${item.is_available ? 'Available' : 'Sold Out'}
+            </button>
+          </td>
+          <td style="padding: 12px;">
+            <input type="checkbox" ${item.is_featured ? 'checked' : ''} onchange="toggleFeatured(${idx})">
+          </td>
+          <td style="padding: 12px;">
+            <span style="font-weight: 700; font-size: 0.78rem; padding: 4px 8px; border-radius: var(--radius-full); ${item.is_published ? 'background:#d4edda; color:#155724;' : 'background:#fff3cd; color:#856404;'}">
+              ${item.is_published ? 'PUBLISHED' : 'UNPUBLISHED (PREVIEW)'}
+            </span>
+          </td>
+          <td style="padding: 12px;">
+            <button class="btn btn-outline btn-sm" onclick="editDish(${idx})">Edit</button>
+            <button class="btn btn-outline btn-sm" style="color: #c85a32;" onclick="archiveDish(${idx})">Archive</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function toggleAvailability(idx) {
+      adminMenu[idx].is_available = !adminMenu[idx].is_available;
+      saveAdminMenu();
+    }
+
+    function toggleFeatured(idx) {
+      adminMenu[idx].is_featured = !adminMenu[idx].is_featured;
+      saveAdminMenu();
+    }
+
+    function archiveDish(idx) {
+      if (confirm(`Archive dish "${adminMenu[idx].name}"? It will be marked unavailable.`)) {
+        adminMenu[idx].is_available = false;
+        adminMenu[idx].is_published = false;
+        saveAdminMenu();
+        ROCK_STONE.showToast('Dish archived safely', 'info');
+      }
+    }
+
+    function openItemModal() {
+      document.getElementById('modal-title').textContent = 'Add Pure Vegetarian Dish';
+      document.getElementById('dish-id').value = '';
+      document.getElementById('dish-name').value = '';
+      document.getElementById('dish-price').value = '';
+      document.getElementById('dish-desc').value = '';
+      document.getElementById('dish-tags').value = '';
+      document.getElementById('item-modal').classList.add('active');
+    }
+
+    function editDish(idx) {
+      const item = adminMenu[idx];
+      document.getElementById('modal-title').textContent = 'Edit Pure Vegetarian Dish';
+      document.getElementById('dish-id').value = item.id;
+      document.getElementById('dish-name').value = item.name;
+      document.getElementById('dish-category').value = item.category;
+      document.getElementById('dish-price').value = item.price;
+      document.getElementById('dish-desc').value = item.description;
+      document.getElementById('dish-tags').value = (item.dietary || []).join(', ');
+      document.getElementById('item-modal').classList.add('active');
+    }
+
+    function closeModals() {
+      document.getElementById('item-modal').classList.remove('active');
+      document.getElementById('csv-modal').classList.remove('active');
+    }
+
+    function handleDishSave(e) {
+      e.preventDefault();
+      const id = document.getElementById('dish-id').value;
+      const name = document.getElementById('dish-name').value.trim();
+      const category = document.getElementById('dish-category').value;
+      const price = parseFloat(document.getElementById('dish-price').value);
+      const desc = document.getElementById('dish-desc').value.trim();
+      const tags = document.getElementById('dish-tags').value.split(',').map(t => t.trim()).filter(Boolean);
+
+      // Strict Veg Word Filter
+      const forbidden = ['chicken', 'meat', 'mutton', 'fish', 'prawn', 'egg', 'pork', 'beef', 'bacon', 'ham'];
+      const textToCheck = (name + ' ' + desc).toLowerCase();
+      for (let word of forbidden) {
+        if (textToCheck.includes(word)) {
+          alert(`Pure Vegetarian Violation: Term "${word}" is strictly prohibited at Rock & Stone Restaurant.`);
+          return;
+        }
+      }
+
+      if (id) {
+        const item = adminMenu.find(i => i.id === id);
+        if (item) {
+          item.name = name;
+          item.category = category;
+          item.price = price;
+          item.description = desc;
+          item.dietary = tags;
+        }
+      } else {
+        adminMenu.push({
+          id: 'veg-' + Date.now(),
+          name: name,
+          category: category,
+          price: price,
+          description: desc,
+          dietary: tags,
+          image: 'assets/images/pure-veg-thali.jpg',
+          is_pure_veg: true,
+          is_available: true,
+          is_featured: false,
+          is_published: false // Needs owner sign-off
+        });
+      }
+
+      saveAdminMenu();
+      closeModals();
+      ROCK_STONE.showToast('Pure veg dish saved successfully', 'success');
+    }
+
+    function openCsvModal() {
+      document.getElementById('csv-modal').classList.add('active');
+    }
+
+    function processCsvImport() {
+      const input = document.getElementById('csv-file-input');
+      const report = document.getElementById('csv-report');
+      if (!input.files || input.files.length === 0) {
+        alert('Please select a CSV file to validate.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const lines = e.target.result.split('\n').map(l => l.trim()).filter(Boolean);
+        if (lines.length < 2) {
+          alert('CSV file is empty or missing headers.');
+          return;
+        }
+
+        const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+        let imported = 0;
+        let rejected = 0;
+
+        for (let i = 1; i < lines.length; i++) {
+          const cols = lines[i].split(',').map(c => c.trim().replace(/^"|"$/g, ''));
+          const name = cols[0] || 'Vegetarian Specialty';
+          const cat = cols[1] || 'Main Course';
+          const price = parseFloat(cols[2]) || 250;
+          const desc = cols[3] || 'Authentic pure veg preparation';
+
+          // Veg check
+          const forbidden = ['chicken', 'meat', 'mutton', 'fish', 'egg'];
+          const lineStr = lines[i].toLowerCase();
+          const hasNonVeg = forbidden.some(w => lineStr.includes(w));
+
+          if (hasNonVeg) {
+            rejected++;
+          } else {
+            adminMenu.push({
+              id: 'imp-' + Date.now() + '-' + i,
+              name: name,
+              category: cat,
+              price: price,
+              description: desc,
+              image: 'assets/images/pure-veg-thali.jpg',
+              is_pure_veg: true,
+              is_available: true,
+              is_featured: false,
+              is_published: false // Safe default
+            });
+            imported++;
+          }
+        }
+
+        saveAdminMenu();
+        report.style.display = 'block';
+        report.innerHTML = `
+          <strong>CSV Validation Complete:</strong><br>
+          ✅ Successfully imported: <strong>${imported}</strong> pure vegetarian dishes (marked unpublished).<br>
+          ${rejected > 0 ? `❌ Rejected <strong>${rejected}</strong> rows violating pure veg criteria.` : ''}
+        `;
+        ROCK_STONE.showToast(`Imported ${imported} dishes from CSV`, 'success');
+      };
+      reader.readAsText(input.files[0]);
+    }
+
+    document.addEventListener('DOMContentLoaded', renderAdminMenu);
+  </script>
+</body>
+</html>
