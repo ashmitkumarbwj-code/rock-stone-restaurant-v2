@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart &amp; Checkout | Rock & Stone Restaurant (Pure Veg)</title>
+  <meta name="description" content="Review your pure vegetarian order and proceed with dine-in, takeaway, or delivery checkout.">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <style>
+    .checkout-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 36px;
+      align-items: flex-start;
+    }
+    .order-type-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .order-type-card {
+      border: 2px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      background: #ffffff;
+      transition: all var(--transition-fast);
+    }
+    .order-type-card:hover, .order-type-card.active {
+      border-color: var(--pine-700);
+      background: var(--pine-100);
+    }
+    .order-type-card.active {
+      box-shadow: 0 0 0 2px var(--pine-700);
+    }
+    .order-type-card h4 {
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+    .order-type-card p {
+      font-size: 0.78rem;
+      color: var(--stone-600);
+    }
+    .checkout-card {
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+    }
+    .payment-option {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+      border: 1.5px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      margin-bottom: 12px;
+      cursor: pointer;
+      background: #fff;
+    }
+    .payment-option.active {
+      border-color: var(--terracotta-500);
+      background: var(--terracotta-100);
+    }
+    @media (max-width: 900px) {
+      .checkout-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <div style="background: var(--pine-900); color: var(--gold-500); padding: 8px 16px; font-size: 0.82rem; font-weight: 700; text-align: center;">
+    🌿 Strictly 100% Pure Vegetarian Kitchen &bull; Verified Authentic Ingredients
+  </div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="index.html" class="brand-link">
+        <div class="brand-logo-mark">R&amp;S</div>
+        <div class="brand-info">
+          <span class="brand-title">Rock &amp; Stone</span>
+          <span class="brand-sub">Pure Veg Himalayan</span>
+        </div>
+      </a>
+
+      <nav class="nav-desktop">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="menu.html" class="nav-link">Pure Veg Menu</a>
+        <a href="story.html" class="nav-link">Our Story</a>
+        <a href="reservations.html" class="nav-link">Table Booking</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="veg-cert-pill">
+          <div class="pure-veg-icon"></div>
+          <span>Pure Veg</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Checkout Page Content -->
+  <section class="section">
+    <div class="container">
+      <div style="margin-bottom: 32px;">
+        <span class="section-subtitle">Secure Himalayan Ordering</span>
+        <h1 style="font-size: 2.2rem; margin-bottom: 8px;">Review Your Cart &amp; Place Order</h1>
+        <p>100% Pure Vegetarian cuisine prepared fresh at Rock &amp; Stone Restaurant, Nurpur.</p>
+      </div>
+
+      <div class="checkout-grid">
+        
+        <!-- Left: Cart Items & Customer Details -->
+        <div>
+          <!-- Cart Items Container -->
+          <div class="checkout-card" style="margin-bottom: 28px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <h3 style="font-size: 1.3rem;">Order Items</h3>
+              <a href="menu.html" style="font-size: 0.88rem; font-weight: 700; color: var(--pine-700);">+ Add More Dishes</a>
+            </div>
+
+            <div id="checkout-cart-items-list">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Customer & Order Type Form -->
+          <div class="checkout-card">
+            <h3 style="font-size: 1.3rem; margin-bottom: 18px;">Customer &amp; Service Type</h3>
+
+            <label class="form-label">Select Order Type</label>
+            <div class="order-type-selector">
+              <div class="order-type-card active" data-type="DINE_IN" onclick="selectOrderType('DINE_IN', this)">
+                <div style="font-size: 1.5rem; margin-bottom: 4px;">🍽️</div>
+                <h4>Dine-In</h4>
+                <p>At Restaurant Table</p>
+              </div>
+              <div class="order-type-card" data-type="TAKEAWAY" onclick="selectOrderType('TAKEAWAY', this)">
+                <div style="font-size: 1.5rem; margin-bottom: 4px;">🛍️</div>
+                <h4>Takeaway</h4>
+                <p>Self Pickup Counter</p>
+              </div>
+              <div class="order-type-card" data-type="DELIVERY" onclick="selectOrderType('DELIVERY', this)">
+                <div style="font-size: 1.5rem; margin-bottom: 4px;">🛵</div>
+                <h4>Delivery</h4>
+                <p>Kangra Local Area</p>
+              </div>
+            </div>
+
+            <form id="checkout-form" onsubmit="handleOrderSubmission(event)">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                  <label class="form-label">Full Name *</label>
+                  <input type="text" id="cust-name" class="form-control" placeholder="Enter full name" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Mobile Number (WhatsApp) *</label>
+                  <input type="tel" id="cust-phone" class="form-control" placeholder="+91 76781 29577" required pattern="[0-9+ -]{10,14}">
+                </div>
+              </div>
+
+              <!-- Dine-In Table No (Only for Dine-in) -->
+              <div class="form-group" id="field-table-no">
+                <label class="form-label">Table Number (If already seated)</label>
+                <input type="text" id="cust-table" class="form-control" placeholder="e.g. Table 4, Terrace 2 (Optional)">
+              </div>
+
+              <!-- Delivery Address (Only shown for delivery) -->
+              <div class="form-group" id="field-delivery-address" style="display: none;">
+                <label class="form-label">Delivery Address &amp; Landmark *</label>
+                <textarea id="cust-address" class="form-control" rows="3" placeholder="Flat/House No, Street, Landmark near Tatal / Nurpur"></textarea>
+                <small style="color: var(--stone-500); font-size: 0.82rem; margin-top: 4px; display: block;">
+                  📍 Delivery available within restaurant radius (Tatal, Khel, Nurpur).
+                </small>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Special Cooking Instructions (Optional)</label>
+                <input type="text" id="cust-notes" class="form-control" placeholder="e.g. Jain preparation (no onion/garlic), extra crispy roti, mild spice">
+              </div>
+
+              <!-- Payment Method Selection -->
+              <div style="margin-top: 24px;">
+                <label class="form-label">Select Payment Method</label>
+                
+                <!-- Cash Option -->
+                <div class="payment-option active" id="opt-cash" onclick="selectPaymentMethod('CASH', this)">
+                  <input type="radio" name="payment_method" value="CASH" checked>
+                  <div>
+                    <div style="font-weight: 700; color: var(--stone-900);">Cash at Restaurant / Cash on Delivery</div>
+                    <div style="font-size: 0.82rem; color: var(--stone-600);">Pay via cash or card at the restaurant counter upon service/delivery</div>
+                  </div>
+                </div>
+
+                <!-- SBI Merchant UPI QR Option -->
+                <div class="payment-option" id="opt-upi" onclick="selectPaymentMethod('UPI_QR', this)">
+                  <input type="radio" name="payment_method" value="UPI_QR">
+                  <div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <div style="font-weight: 700; color: var(--stone-900);">SBI Payments Merchant QR (UPI Scan &amp; Pay)</div>
+                      <span style="background: #e8f4fc; color: #1a73e8; font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: var(--radius-full);">GPay / PhonePe / Paytm / BHIM</span>
+                    </div>
+                    <div style="font-size: 0.82rem; color: var(--stone-600);">Scan Rock &amp; Stone's authentic SBI merchant QR code from your mobile banking app</div>
+                  </div>
+                </div>
+
+                <!-- SBI QR Display Box (Revealed when UPI_QR is selected) -->
+                <div id="sbi-qr-container" style="display: none; margin-top: 18px; background: #ffffff; border: 2px solid #1a73e8; border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-md);">
+                  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+                    <span style="background: #1a73e8; color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 800;">1</span>
+                    <strong style="font-size: 1.05rem; color: #0c2340;">Scan Authentic SBI Merchant Standee</strong>
+                  </div>
+
+                  <div style="text-align: center; margin-bottom: 18px; background: #f8fafc; padding: 16px; border-radius: var(--radius-md); border: 1px solid #e2e8f0;">
+                    <!-- Original uncropped, unredrawn SBI merchant standee -->
+                    <img src="assets/images/sbi-merchant-qr.png" alt="SBI Payments Official Merchant QR - Rock and Stone Restraunt" id="sbi-qr-img" style="max-width: 290px; width: 100%; height: auto; margin: 0 auto; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); display: block;">
+                    
+                    <div style="margin-top: 14px; font-size: 0.88rem; color: #334155;">
+                      Merchant Name: <strong style="color: #0c2340;">ROCK AND STONE RESTRAUNT</strong><br>
+                      TID: <code>SB797564</code> | MID: <code>022211900799141</code>
+                    </div>
+
+                    <!-- UPI ID Copy Tool -->
+                    <div style="margin-top: 10px; display: inline-flex; align-items: center; gap: 8px; background: #e0f2fe; padding: 6px 14px; border-radius: var(--radius-full); font-size: 0.82rem; color: #0369a1; border: 1px solid #bae6fd;">
+                      <span>UPI ID: <strong id="upi-id-text">SBIBHIM.INSTANT58346251347481864@sbipay</strong></span>
+                      <button type="button" onclick="copyUpiId()" style="background: #0284c7; color: #fff; border: none; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">Copy</button>
+                    </div>
+                  </div>
+
+                  <div style="background: #fef3c7; border: 1.5px solid #fde68a; border-radius: var(--radius-md); padding: 14px 18px; margin-bottom: 18px; font-size: 0.85rem; color: #92400e;">
+                    <div style="font-weight: 800; font-size: 0.95rem; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                      <span>💰 Exact Amount to Pay:</span>
+                      <span id="qr-payable-amount" style="font-size: 1.25rem; font-weight: 800; color: #b45309;">₹0</span>
+                    </div>
+                    <span>Please enter this exact amount in your UPI app. Do not round up or down.</span>
+                  </div>
+
+                  <!-- Step 2: Enter UTR / UPI Ref ID -->
+                  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <span style="background: #1a73e8; color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 800;">2</span>
+                    <label class="form-label" style="margin: 0; color: #0c2340;">Enter 12-Digit UPI Reference / UTR Number *</label>
+                  </div>
+                  <input type="text" id="cust-utr" class="form-control" placeholder="e.g. 4289XXXXXXXX (From GPay/PhonePe receipt)" maxlength="16" style="letter-spacing: 0.05em; font-weight: 700;">
+                  
+                  <div style="margin-top: 12px; font-size: 0.8rem; color: #64748b; line-height: 1.5;">
+                    🛡️ <strong>Manual Bank Reconciliation Policy:</strong> The order will be submitted with <em>PENDING</em> payment status. Restaurant staff verifies the bank credit against our SBI terminal before fulfilling the order. A screenshot alone is not proof of payment.
+                  </div>
+                </div>
+
+              </div>
+
+              <button type="submit" id="btn-place-order" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 20px;">
+                Place Pure Veg Order &rarr;
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Right: Order Summary Card -->
+        <div class="checkout-card" style="position: sticky; top: 100px;">
+          <h3 style="font-size: 1.3rem; margin-bottom: 20px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
+            Bill Breakdown
+          </h3>
+
+          <div class="cart-summary-row">
+            <span>Item Subtotal:</span>
+            <span id="summary-subtotal" style="font-weight: 700;">₹0</span>
+          </div>
+          <div class="cart-summary-row">
+            <span>Restaurant GST (5%):</span>
+            <span id="summary-tax" style="font-weight: 700;">₹0</span>
+          </div>
+          <div class="cart-summary-row" id="row-packaging">
+            <span>Eco-Packaging Charge:</span>
+            <span id="summary-packaging" style="font-weight: 700;">₹0</span>
+          </div>
+          <div class="cart-summary-row" id="row-delivery" style="display: none;">
+            <span>Local Delivery Fee:</span>
+            <span id="summary-delivery" style="font-weight: 700;">₹40</span>
+          </div>
+
+          <div class="cart-summary-row cart-summary-total">
+            <span>Total Payable:</span>
+            <span id="summary-total" style="color: var(--pine-700);">₹0</span>
+          </div>
+
+          <div style="margin-top: 24px; padding: 14px; background: var(--cream-100); border-radius: var(--radius-md); border: 1px solid var(--border-light); font-size: 0.82rem; color: var(--stone-600);">
+            <div style="font-weight: 700; color: var(--pure-veg-green); margin-bottom: 4px;">
+              🌿 100% Pure Vegetarian Assurance
+            </div>
+            All dishes are prepared without eggs or animal rennet. Prices verified authoritatively on server.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>&copy; 2026 Rock &amp; Stone Restaurant &bull; FSSAI Lic. 10925004000220 &bull; GSTIN 02DKLPP2797H1ZR</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    let selectedOrderType = 'DINE_IN';
+    let selectedPayment = 'CASH';
+
+    function selectOrderType(type, cardEl) {
+      selectedOrderType = type;
+      document.querySelectorAll('.order-type-card').forEach(c => c.classList.remove('active'));
+      cardEl.classList.add('active');
+
+      const addrField = document.getElementById('field-delivery-address');
+      const tableField = document.getElementById('field-table-no');
+      const deliveryRow = document.getElementById('row-delivery');
+      const custAddress = document.getElementById('cust-address');
+
+      if (type === 'DELIVERY') {
+        addrField.style.display = 'block';
+        custAddress.required = true;
+        tableField.style.display = 'none';
+        deliveryRow.style.display = 'flex';
+      } else {
+        addrField.style.display = 'none';
+        custAddress.required = false;
+        tableField.style.display = type === 'DINE_IN' ? 'block' : 'none';
+        deliveryRow.style.display = 'none';
+      }
+
+      updateBillBreakdown();
+    }
+
+    function selectPaymentMethod(method, optionEl) {
+      selectedPayment = method;
+      document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('active'));
+      optionEl.classList.add('active');
+      optionEl.querySelector('input[type="radio"]').checked = true;
+
+      const sbiContainer = document.getElementById('sbi-qr-container');
+      const utrInput = document.getElementById('cust-utr');
+      if (method === 'UPI_QR') {
+        sbiContainer.style.display = 'block';
+        utrInput.required = true;
+      } else {
+        sbiContainer.style.display = 'none';
+        utrInput.required = false;
+      }
+      updateBillBreakdown();
+    }
+
+    function copyUpiId() {
+      const upiText = document.getElementById('upi-id-text').textContent;
+      navigator.clipboard.writeText(upiText).then(() => {
+        ROCK_STONE.showToast('SBI Merchant UPI ID copied to clipboard!', 'success');
+      }).catch(() => {
+        ROCK_STONE.showToast('Copied: ' + upiText, 'info');
+      });
+    }
+
+    function renderCheckoutCart() {
+      const container = document.getElementById('checkout-cart-items-list');
+      const items = ROCK_STONE.cart.items;
+
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 40px 10px;">
+            <p style="color: var(--stone-500); margin-bottom: 16px;">Your cart is empty.</p>
+            <a href="menu.html" class="btn btn-primary btn-sm">Explore Pure Veg Menu</a>
+          </div>
+        `;
+        document.getElementById('btn-place-order').disabled = true;
+        updateBillBreakdown();
+        return;
+      }
+
+      document.getElementById('btn-place-order').disabled = false;
+      container.innerHTML = items.map(item => `
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border-light);">
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="veg-box"><span class="veg-circle"></span></span>
+              <strong style="color: var(--stone-900); font-size: 1rem;">${item.name}</strong>
+            </div>
+            <div style="font-size: 0.85rem; color: var(--stone-500); margin-top: 2px;">
+              ₹${item.price} each
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <div class="quantity-control">
+              <button class="qty-btn" type="button" onclick="ROCK_STONE.cart.updateQuantity('${item.id}', ${item.quantity - 1}); renderCheckoutCart();">-</button>
+              <span class="qty-display">${item.quantity}</span>
+              <button class="qty-btn" type="button" onclick="ROCK_STONE.cart.updateQuantity('${item.id}', ${item.quantity + 1}); renderCheckoutCart();">+</button>
+            </div>
+            <div style="font-weight: 700; width: 80px; text-align: right; color: var(--pine-700);">
+              ₹${item.price * item.quantity}
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      updateBillBreakdown();
+    }
+
+    function updateBillBreakdown() {
+      const subtotal = ROCK_STONE.cart.getSubtotal();
+      const tax = Math.round(subtotal * 0.05);
+      const packaging = (selectedOrderType === 'TAKEAWAY' || selectedOrderType === 'DELIVERY') && subtotal > 0 ? 25 : 0;
+      const delivery = selectedOrderType === 'DELIVERY' && subtotal > 0 ? 40 : 0;
+      const total = subtotal + tax + packaging + delivery;
+
+      document.getElementById('summary-subtotal').textContent = `₹${subtotal}`;
+      document.getElementById('summary-tax').textContent = `₹${tax}`;
+      document.getElementById('summary-packaging').textContent = `₹${packaging}`;
+      document.getElementById('summary-total').textContent = `₹${total}`;
+
+      const qrPayable = document.getElementById('qr-payable-amount');
+      if (qrPayable) qrPayable.textContent = `₹${total}`;
+    }
+
+    function handleOrderSubmission(e) {
+      e.preventDefault();
+      const items = ROCK_STONE.cart.items;
+      if (items.length === 0) {
+        ROCK_STONE.showToast('Please add items to your cart first', 'error');
+        return;
+      }
+
+      const name = document.getElementById('cust-name').value.trim();
+      const phone = document.getElementById('cust-phone').value.trim();
+      const table = document.getElementById('cust-table').value.trim();
+      const address = document.getElementById('cust-address').value.trim();
+      const notes = document.getElementById('cust-notes').value.trim();
+      const utr = document.getElementById('cust-utr') ? document.getElementById('cust-utr').value.trim() : '';
+
+      if (selectedOrderType === 'DELIVERY' && !address) {
+        ROCK_STONE.showToast('Please provide a delivery address', 'error');
+        return;
+      }
+
+      if (selectedPayment === 'UPI_QR' && (!utr || utr.length < 6)) {
+        ROCK_STONE.showToast('Please enter the 12-digit UPI reference (UTR) number after scanning QR', 'error');
+        document.getElementById('cust-utr').focus();
+        return;
+      }
+
+      const subtotal = ROCK_STONE.cart.getSubtotal();
+      const tax = Math.round(subtotal * 0.05);
+      const packaging = (selectedOrderType === 'TAKEAWAY' || selectedOrderType === 'DELIVERY') ? 25 : 0;
+      const delivery = selectedOrderType === 'DELIVERY' ? 40 : 0;
+      const total = subtotal + tax + packaging + delivery;
+
+      // Generate Unique Order Number
+      const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      const randomSeq = Math.floor(1000 + Math.random() * 9000);
+      const orderNumber = `RS-${dateStr}-${randomSeq}`;
+      const idempotencyKey = 'IDEM-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9);
+
+      // Order Payload — Payment Status is STRICTLY PENDING until staff verifies bank credit
+      const orderPayload = {
+        order_number: orderNumber,
+        idempotency_key: idempotencyKey,
+        customer_name: name,
+        customer_phone: phone,
+        order_type: selectedOrderType,
+        order_status: 'PENDING',
+        payment_status: 'PENDING', // PENDING until manual or bank verification
+        payment_method: selectedPayment === 'UPI_QR' ? 'SBI_UPI_QR' : 'CASH',
+        utr_number: utr || null,
+        merchant_name: 'ROCK AND STONE RESTRAUNT',
+        sbi_tid: 'SB797564',
+        sbi_mid: '022211900799141',
+        table_number: table,
+        delivery_address: selectedOrderType === 'DELIVERY' ? address : null,
+        special_instructions: notes,
+        subtotal: subtotal,
+        charges: packaging + delivery + tax,
+        total_amount: total,
+        created_at: new Date().toISOString(),
+        items: items.map(i => ({
+          menu_item_id: i.id,
+          name: i.name,
+          unit_price: i.price,
+          quantity: i.quantity,
+          line_total: i.price * i.quantity
+        }))
+      };
+
+      // Save order to persistent store
+      let storedOrders = [];
+      try {
+        storedOrders = JSON.parse(localStorage.getItem('rs_orders_db') || '[]');
+      } catch (err) {
+        storedOrders = [];
+      }
+      storedOrders.unshift(orderPayload);
+      localStorage.setItem('rs_orders_db', JSON.stringify(storedOrders));
+
+      // Clear active cart
+      ROCK_STONE.cart.clearCart();
+
+      // Redirect to Confirmation
+      window.location.href = `order-confirmation.html?order_number=${orderNumber}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCheckoutCart();
+      ROCK_STONE.cart.addListener(renderCheckoutCart);
+    });
+  </script>
+</body>
+</html>
