@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Kitchen Display System (KDS) | Rock & Stone Pure Veg</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <style>
+    body {
+      background: #121815;
+      color: #e6ede8;
+    }
+    .kds-header {
+      background: #0a110d;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #1f2d24;
+    }
+    .kds-board {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+      padding: 24px;
+    }
+    .kds-ticket {
+      background: #1a241e;
+      border-radius: var(--radius-md);
+      border: 1px solid #283a2f;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      transition: transform var(--transition-fast);
+    }
+    .kds-ticket.ticket-pending {
+      border-top: 5px solid #f5a623;
+    }
+    .kds-ticket.ticket-preparing {
+      border-top: 5px solid #3498db;
+    }
+    .kds-ticket.ticket-ready {
+      border-top: 5px solid var(--pure-veg-green);
+    }
+    .ticket-header {
+      background: rgba(255,255,255,0.04);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .ticket-body {
+      padding: 16px;
+      flex-grow: 1;
+    }
+    .ticket-item-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px dashed rgba(255,255,255,0.1);
+      font-size: 1rem;
+    }
+    .ticket-actions {
+      padding: 12px 16px;
+      background: rgba(0,0,0,0.25);
+      display: flex;
+      gap: 10px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- KDS Top Bar -->
+  <div class="kds-header">
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <a href="index.html" class="brand-link" style="color: #fff;">
+        <div class="brand-logo-mark" style="background: var(--pure-veg-green); width: 38px; height: 38px; font-size: 1rem;">KDS</div>
+        <div class="brand-info">
+          <span class="brand-title" style="color: #fff; font-size: 1.15rem;">Kitchen Display Board</span>
+          <span class="brand-sub" style="color: var(--gold-500);">Rock &amp; Stone Pure Veg</span>
+        </div>
+      </a>
+      <div class="veg-cert-pill" style="background: rgba(27,135,56,0.2); color: #4ade80;">
+        <div class="pure-veg-icon" style="border-color: #4ade80;"></div>
+        <span>100% Pure Veg Line</span>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <button id="btn-audio-toggle" class="btn btn-outline btn-sm" style="color: #fff; border-color: #3b5042;" onclick="testBuzzer()">
+        🔔 Test Audio Chime
+      </button>
+      <span id="kds-clock" style="font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; color: var(--gold-500);">10:00:00</span>
+      <a href="index.html" class="btn btn-secondary btn-sm">Exit to Dashboard</a>
+    </div>
+  </div>
+
+  <!-- Filter Strip -->
+  <div style="padding: 12px 24px; background: #161e19; display: flex; gap: 12px; border-bottom: 1px solid #243329;">
+    <button class="filter-btn active" onclick="filterKds('ALL', this)">All Active Orders (<span id="count-all">0</span>)</button>
+    <button class="filter-btn" onclick="filterKds('PENDING', this)">Pending (<span id="count-pending">0</span>)</button>
+    <button class="filter-btn" onclick="filterKds('PREPARING', this)">Cooking / Preparing (<span id="count-prep">0</span>)</button>
+    <button class="filter-btn" onclick="filterKds('READY', this)">Ready for Dispatch (<span id="count-ready">0</span>)</button>
+  </div>
+
+  <!-- KDS Active Board -->
+  <div class="kds-board" id="kds-tickets-container">
+    <!-- Rendered via JS -->
+  </div>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    // Web Audio Synthesizer Chime
+    function playKitchenChime() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15); // A5
+
+        gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.6);
+      } catch (e) {
+        console.log('Audio chime error', e);
+      }
+    }
+
+    function testBuzzer() {
+      playKitchenChime();
+      ROCK_STONE.showToast('Kitchen Audio Chime Active 🔔', 'success');
+    }
+
+    // Live Clock
+    setInterval(() => {
+      document.getElementById('kds-clock').textContent = new Date().toLocaleTimeString('en-IN');
+    }, 1000);
+
+    let activeFilter = 'ALL';
+
+    function filterKds(filter, btn) {
+      activeFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderKdsBoard();
+    }
+
+    function advanceOrderStatus(orderNumber, newStatus) {
+      let orders = JSON.parse(localStorage.getItem('rs_orders_db') || '[]');
+      const order = orders.find(o => o.order_number === orderNumber);
+      if (order) {
+        order.order_status = newStatus;
+        localStorage.setItem('rs_orders_db', JSON.stringify(orders));
+        playKitchenChime();
+        ROCK_STONE.showToast(`Order ${orderNumber} moved to ${newStatus}`, 'success');
+        renderKdsBoard();
+      }
+    }
+
+    function cancelOrder(orderNumber) {
+      const reason = prompt('Please enter reason for order rejection/cancellation:');
+      if (reason) {
+        advanceOrderStatus(orderNumber, 'CANCELLED');
+      }
+    }
+
+    function renderKdsBoard() {
+      const container = document.getElementById('kds-tickets-container');
+      let orders = JSON.parse(localStorage.getItem('rs_orders_db') || '[]');
+
+      // Update counters
+      const pendingCount = orders.filter(o => o.order_status === 'PENDING').length;
+      const prepCount = orders.filter(o => ['ACCEPTED', 'PREPARING'].includes(o.order_status)).length;
+      const readyCount = orders.filter(o => o.order_status === 'READY').length;
+      const allActive = orders.filter(o => !['COMPLETED', 'CANCELLED', 'REJECTED'].includes(o.order_status));
+
+      document.getElementById('count-pending').textContent = pendingCount;
+      document.getElementById('count-prep').textContent = prepCount;
+      document.getElementById('count-ready').textContent = readyCount;
+      document.getElementById('count-all').textContent = allActive.length;
+
+      let displayOrders = allActive;
+      if (activeFilter === 'PENDING') {
+        displayOrders = orders.filter(o => o.order_status === 'PENDING');
+      } else if (activeFilter === 'PREPARING') {
+        displayOrders = orders.filter(o => ['ACCEPTED', 'PREPARING'].includes(o.order_status));
+      } else if (activeFilter === 'READY') {
+        displayOrders = orders.filter(o => o.order_status === 'READY');
+      }
+
+      if (displayOrders.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #7a8c80;">
+            <div style="font-size: 3rem; margin-bottom: 12px;">✅</div>
+            <h3>Kitchen Line Clear</h3>
+            <p>No active orders in this queue right now.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = displayOrders.map(order => {
+        let ticketClass = 'ticket-pending';
+        if (['ACCEPTED', 'PREPARING'].includes(order.order_status)) ticketClass = 'ticket-preparing';
+        if (order.order_status === 'READY') ticketClass = 'ticket-ready';
+
+        const orderTime = new Date(order.created_at || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        return `
+          <div class="kds-ticket ${ticketClass}">
+            <div class="ticket-header">
+              <div>
+                <strong style="color: #fff; font-size: 1.1rem;">${order.order_number}</strong>
+                <span style="display: block; font-size: 0.75rem; color: #9bb0a2;">${order.order_type} ${order.table_number ? '&bull; ' + order.table_number : ''}</span>
+              </div>
+              <div style="text-align: right;">
+                <span style="font-weight: 700; color: var(--gold-500);">${orderTime}</span>
+                <span style="display: block; font-size: 0.72rem; color: #8ba093;">${order.payment_method} (${order.payment_status})</span>
+              </div>
+            </div>
+
+            <div class="ticket-body">
+              <div style="margin-bottom: 8px; font-size: 0.82rem; color: #c4d4c8;">
+                Guest: <strong>${order.customer_name}</strong> (${order.customer_phone})
+              </div>
+
+              ${(order.items || []).map(item => `
+                <div class="ticket-item-row">
+                  <span><strong>${item.quantity}&times;</strong> ${item.name}</span>
+                  <span style="color: var(--pure-veg-green); font-size: 0.8rem;">PURE VEG</span>
+                </div>
+              `).join('')}
+
+              ${order.special_instructions ? `
+                <div style="margin-top: 12px; padding: 8px 10px; background: rgba(200,90,50,0.15); border-left: 3px solid var(--terracotta-500); border-radius: 4px; font-size: 0.82rem; color: #ffab91;">
+                  <strong>Note:</strong> ${order.special_instructions}
+                </div>
+              ` : ''}
+            </div>
+
+            <div class="ticket-actions">
+              ${order.order_status === 'PENDING' ? `
+                <button class="btn btn-primary btn-sm" style="flex: 1;" onclick="advanceOrderStatus('${order.order_number}', 'ACCEPTED')">Accept &amp; Start</button>
+                <button class="btn btn-outline btn-sm" style="color: #ff8a80; border-color: #ff8a80;" onclick="cancelOrder('${order.order_number}')">Reject</button>
+              ` : ''}
+
+              ${order.order_status === 'ACCEPTED' ? `
+                <button class="btn btn-primary btn-sm" style="flex: 1; background: #3498db;" onclick="advanceOrderStatus('${order.order_number}', 'PREPARING')">Send To Cooking</button>
+              ` : ''}
+
+              ${order.order_status === 'PREPARING' ? `
+                <button class="btn btn-primary btn-sm" style="flex: 1; background: var(--pure-veg-green);" onclick="advanceOrderStatus('${order.order_number}', 'READY')">Mark Food Ready</button>
+              ` : ''}
+
+              ${order.order_status === 'READY' ? `
+                <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="advanceOrderStatus('${order.order_number}', 'COMPLETED')">Order Completed / Served</button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderKdsBoard();
+      // Auto-poll orders every 5 seconds
+      setInterval(renderKdsBoard, 5000);
+    });
+  </script>
+</body>
+</html>
