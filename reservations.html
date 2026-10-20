@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Table Reservation | Rock & Stone Restaurant (Pure Veg)</title>
+  <meta name="description" content="Book your dining table at Rock & Stone Restaurant, Tatal, Nurpur. Enjoy pure vegetarian Himachali hospitality with mountain view seating.">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+
+  <!-- Announcement Bar -->
+  <div style="background: var(--pine-900); color: var(--gold-500); padding: 8px 16px; font-size: 0.82rem; font-weight: 700; text-align: center;">
+    🌿 Strictly 100% Pure Vegetarian Himalayan Dining &bull; Reserve Your Table
+  </div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="index.html" class="brand-link">
+        <div class="brand-logo-mark">R&amp;S</div>
+        <div class="brand-info">
+          <span class="brand-title">Rock &amp; Stone</span>
+          <span class="brand-sub">Pure Veg Himalayan</span>
+        </div>
+      </a>
+
+      <nav class="nav-desktop">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="menu.html" class="nav-link">Pure Veg Menu</a>
+        <a href="story.html" class="nav-link">Our Story</a>
+        <a href="reservations.html" class="nav-link active">Table Booking</a>
+        <a href="gallery.html" class="nav-link">Gallery</a>
+        <a href="reviews.html" class="nav-link">Reviews</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="veg-cert-pill">
+          <div class="pure-veg-icon"></div>
+          <span>Pure Veg</span>
+        </div>
+        <button class="cart-btn-header" aria-label="Open Shopping Cart">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+          </svg>
+          <span class="cart-badge" style="display: none;">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Reservation Hero -->
+  <section style="background: var(--pine-900); color: #fff; padding: 60px 0 50px; text-align: center;">
+    <div class="container">
+      <span class="section-subtitle" style="color: var(--gold-500);">Himalayan Dining Reservations</span>
+      <h1 style="color: #fff; margin-bottom: 12px;">Reserve Your Table</h1>
+      <p style="color: rgba(250,247,240,0.85); max-width: 620px; margin: 0 auto;">
+        Experience serene mountain breezes and authentic pure vegetarian feasts. Table bookings are confirmed by our manager within 15 minutes.
+      </p>
+    </div>
+  </section>
+
+  <!-- Reservation Form & Rules Section -->
+  <section class="section">
+    <div class="container" style="max-width: 900px;">
+      <div class="grid-2" style="align-items: flex-start;">
+        
+        <!-- Booking Form -->
+        <div style="background: #ffffff; padding: 36px; border-radius: var(--radius-lg); border: 1px solid var(--border-light); box-shadow: var(--shadow-sm);">
+          <h3 style="margin-bottom: 20px; font-size: 1.4rem;">Table Request Form</h3>
+
+          <form id="reservation-form" onsubmit="handleReservationSubmit(event)">
+            <div class="form-group">
+              <label class="form-label">Full Name *</label>
+              <input type="text" id="res-name" class="form-control" placeholder="Your name" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Mobile Number (WhatsApp) *</label>
+              <input type="tel" id="res-phone" class="form-control" placeholder="+91 76781 29577" required pattern="[0-9+ -]{10,14}">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label class="form-label">Reservation Date *</label>
+                <input type="date" id="res-date" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Time Slot *</label>
+                <select id="res-time" class="form-control" required>
+                  <option value="">Select Time</option>
+                  <option value="12:00 PM">12:00 PM (Lunch)</option>
+                  <option value="01:00 PM">01:00 PM (Lunch)</option>
+                  <option value="02:00 PM">02:00 PM (Lunch)</option>
+                  <option value="07:00 PM">07:00 PM (Dinner)</option>
+                  <option value="08:00 PM">08:00 PM (Dinner)</option>
+                  <option value="09:00 PM">09:00 PM (Dinner)</option>
+                  <option value="09:30 PM">09:30 PM (Late Dinner)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label class="form-label">Number of Guests *</label>
+                <select id="res-guests" class="form-control" required>
+                  <option value="2">2 Guests (Couple)</option>
+                  <option value="4" selected>4 Guests (Family)</option>
+                  <option value="6">6 Guests</option>
+                  <option value="8">8 Guests</option>
+                  <option value="12">10-15 Guests (Party)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Occasion (Optional)</label>
+                <select id="res-occasion" class="form-control">
+                  <option value="Casual Dining">Casual Dining</option>
+                  <option value="Birthday">Birthday Celebration</option>
+                  <option value="Anniversary">Wedding Anniversary</option>
+                  <option value="Family Gathering">Family Gathering</option>
+                  <option value="Business Lunch">Business / Official</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Special Seating &amp; Dietary Requests</label>
+              <textarea id="res-notes" class="form-control" rows="3" placeholder="e.g. Mountain-view terrace table, Jain vegetarian food, quiet corner, baby high chair"></textarea>
+            </div>
+
+            <div style="background: var(--cream-100); padding: 14px; border-radius: var(--radius-md); font-size: 0.82rem; color: var(--stone-600); margin-bottom: 20px; border-left: 3px solid var(--terracotta-500);">
+              <strong>Notice:</strong> Your reservation will be submitted as <em>PENDING</em> and confirmed via WhatsApp / Phone call by restaurant staff. We do not overbook tables.
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+              Submit Reservation Request &rarr;
+            </button>
+          </form>
+
+          <!-- Success Alert Container -->
+          <div id="res-success-box" style="display: none; margin-top: 24px; background: var(--pure-veg-bg); border: 1.5px solid var(--pure-veg-green); padding: 20px; border-radius: var(--radius-md); text-align: center;">
+            <div style="font-size: 2rem; color: var(--pure-veg-green); margin-bottom: 8px;">✓</div>
+            <h4 style="color: var(--pine-900); font-size: 1.2rem; margin-bottom: 4px;">Reservation Request Submitted!</h4>
+            <p style="font-size: 0.88rem; color: var(--stone-700); margin-bottom: 12px;">
+              Request Reference: <strong id="res-ref-no" style="color: var(--pine-700);">RES-20261020-001</strong><br>
+              Status: <span style="background: #fff; padding: 2px 10px; border-radius: var(--radius-full); font-weight: 700; color: #b24a24;">PENDING CONFIRMATION</span>
+            </p>
+            <p style="font-size: 0.82rem; color: var(--stone-600);">Our manager will contact you on your mobile number to confirm availability.</p>
+          </div>
+        </div>
+
+        <!-- Seating & Dining Guidelines -->
+        <div>
+          <div style="background: #ffffff; padding: 32px; border-radius: var(--radius-lg); border: 1px solid var(--border-light); margin-bottom: 24px; box-shadow: var(--shadow-sm);">
+            <h3 style="font-size: 1.25rem; margin-bottom: 16px; color: var(--pine-900);">Dining Hours</h3>
+            <div style="margin-bottom: 14px;">
+              <strong style="color: var(--stone-900); display: block;">Monday – Sunday:</strong>
+              <span style="font-size: 0.92rem; color: var(--stone-600);">10:00 AM – 10:30 PM</span>
+            </div>
+            <div style="margin-bottom: 14px;">
+              <strong style="color: var(--stone-900); display: block;">Dine-in Cutoff:</strong>
+              <span style="font-size: 0.92rem; color: var(--stone-600);">Table service accepted until 10:00 PM</span>
+            </div>
+            <div>
+              <strong style="color: var(--stone-900); display: block;">Table Hold Period:</strong>
+              <span style="font-size: 0.92rem; color: var(--stone-600);">Reserved tables are held for 15 minutes past scheduled time before release.</span>
+            </div>
+          </div>
+
+          <div style="background: var(--pine-900); color: #fff; padding: 32px; border-radius: var(--radius-lg);">
+            <div class="veg-indicator" style="margin-bottom: 12px; color: var(--gold-500);">
+              <div class="veg-box" style="border-color: var(--gold-500);"><div class="veg-circle" style="background-color: var(--gold-500);"></div></div>
+              <span>100% Pure Vegetarian Ethics</span>
+            </div>
+            <h4 style="color: #fff; font-size: 1.15rem; margin-bottom: 10px;">Family &amp; Group Banquets</h4>
+            <p style="font-size: 0.88rem; color: rgba(250,247,240,0.8); line-height: 1.6; margin-bottom: 20px;">
+              Hosting a Kangra Dham, family celebration, or pilgrimage group? Contact our hospitality team directly for custom vegetarian banquet setups.
+            </p>
+            <a href="tel:+917678129577" class="btn btn-secondary btn-sm" style="background: var(--pine-700); color: #fff; border: 1px solid rgba(255,255,255,0.2);">
+              📞 Call: +91 76781 29577
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>&copy; 2026 Rock &amp; Stone Restaurant &bull; FSSAI Lic. 10925004000220</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set min date to today
+      const today = new Date().toISOString().split('T')[0];
+      const dateInput = document.getElementById('res-date');
+      dateInput.min = today;
+      dateInput.value = today;
+    });
+
+    function handleReservationSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('res-name').value.trim();
+      const phone = document.getElementById('res-phone').value.trim();
+      const date = document.getElementById('res-date').value;
+      const time = document.getElementById('res-time').value;
+      const guests = document.getElementById('res-guests').value;
+      const occasion = document.getElementById('res-occasion').value;
+      const notes = document.getElementById('res-notes').value.trim();
+
+      // Check duplicate booking in local registry
+      let reservations = [];
+      try {
+        reservations = JSON.parse(localStorage.getItem('rs_reservations_db') || '[]');
+      } catch (err) {
+        reservations = [];
+      }
+
+      const isDuplicate = reservations.some(r => r.phone === phone && r.date === date && r.time === time);
+      if (isDuplicate) {
+        ROCK_STONE.showToast('You already have a pending booking for this date and time slot.', 'error');
+        return;
+      }
+
+      const refNo = `RES-${date.replace(/-/g, '')}-${Math.floor(100 + Math.random() * 900)}`;
+
+      const newRes = {
+        id: 'res-' + Date.now(),
+        ref_no: refNo,
+        customer_name: name,
+        phone: phone,
+        date: date,
+        time: time,
+        guest_count: guests,
+        occasion: occasion,
+        special_requests: notes,
+        status: 'PENDING',
+        created_at: new Date().toISOString()
+      };
+
+      reservations.unshift(newRes);
+      localStorage.setItem('rs_reservations_db', JSON.stringify(reservations));
+
+      // Show UI success
+      document.getElementById('reservation-form').style.display = 'none';
+      document.getElementById('res-ref-no').textContent = refNo;
+      document.getElementById('res-success-box').style.display = 'block';
+
+      ROCK_STONE.showToast('Reservation request submitted successfully!', 'success');
+    }
+  </script>
+</body>
+</html>
