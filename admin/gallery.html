@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery &amp; Brand Media Manager | Rock & Stone Admin</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <style>
+    .admin-layout { display: flex; min-height: 100vh; background: var(--cream-100); }
+    .admin-sidebar { width: 260px; background: var(--pine-900); color: #fff; padding: 24px 20px; display: flex; flex-direction: column; flex-shrink: 0; }
+    .admin-main { flex-grow: 1; padding: 36px 40px; overflow-y: auto; }
+    .admin-nav { list-style: none; display: flex; flex-direction: column; gap: 6px; margin-top: 32px; flex-grow: 1; }
+    .admin-nav a { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: var(--radius-md); color: rgba(250, 247, 240, 0.75); font-weight: 600; font-size: 0.95rem; }
+    .admin-nav a:hover, .admin-nav a.active { background: rgba(255, 255, 255, 0.12); color: #ffffff; }
+    .admin-nav a.active { border-left: 4px solid var(--gold-500); }
+    .gallery-grid-admin {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .gallery-card-admin {
+      background: #ffffff;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+    }
+    .gallery-card-img {
+      height: 180px;
+      width: 100%;
+      object-fit: cover;
+      background: #e2e8f0;
+    }
+    .gallery-card-body {
+      padding: 16px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="admin-layout">
+    
+    <aside class="admin-sidebar">
+      <div class="brand-link" style="color: #fff;">
+        <div class="brand-logo-mark" style="background: var(--gold-500); color: var(--pine-900);">R&amp;S</div>
+        <div class="brand-info">
+          <span class="brand-title" style="color: #fff; font-size: 1.15rem;">Rock &amp; Stone</span>
+          <span class="brand-sub" style="color: var(--gold-500);">Management Suite</span>
+        </div>
+      </div>
+
+      <ul class="admin-nav">
+        <li><a href="index.html">📊 Overview Dashboard</a></li>
+        <li><a href="orders.html">💳 Orders &amp; Payments</a></li>
+        <li><a href="kitchen.html">🍲 Live Kitchen KDS</a></li>
+        <li><a href="menu.html">📋 Menu Management</a></li>
+        <li><a href="reservations.html">📅 Table Bookings</a></li>
+        <li><a href="reviews.html">⭐ Review Moderation</a></li>
+        <li><a href="gallery.html" class="active">🖼️ Media Gallery</a></li>
+        <li><a href="settings.html">⚙️ Restaurant Settings</a></li>
+      </ul>
+    </aside>
+
+    <main class="admin-main">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
+        <div>
+          <h1 style="font-size: 1.8rem; color: var(--pine-900);">Authentic Restaurant Media &amp; Gallery Manager</h1>
+          <p style="font-size: 0.92rem; color: var(--stone-600);">Manage verified photos of restaurant exterior, dining ambience, and pure vegetarian dishes.</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <a href="https://www.instagram.com/rock_and_stone_restraunt/" target="_blank" class="btn btn-outline btn-sm">
+            📸 View Official Instagram (@rock_and_stone_restraunt) &nearr;
+          </a>
+          <button class="btn btn-primary btn-sm" onclick="openAddPhotoModal()">+ Upload New Photo</button>
+        </div>
+      </div>
+
+      <!-- Authentic Media Policy Card -->
+      <div style="background: #eff6ff; border: 1.5px solid #93c5fd; border-radius: var(--radius-md); padding: 18px 22px; margin-bottom: 28px; font-size: 0.88rem; color: #1e3a8a; line-height: 1.6;">
+        <strong>🛡️ Authentic Media Governance Policy:</strong>
+        <ul style="padding-left: 20px; margin-top: 6px;">
+          <li>Only upload authentic photographs of the restaurant's actual premises, staff, and approved pure vegetarian dishes.</li>
+          <li>Never represent stock photography or AI-generated food as an authentic photo of the restaurant.</li>
+          <li>All media must strictly depict 100% pure vegetarian cuisine and family-friendly dining.</li>
+        </ul>
+      </div>
+
+      <!-- Gallery Grid -->
+      <div class="gallery-grid-admin" id="gallery-admin-container">
+        <!-- Rendered via JS -->
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Add Photo Modal -->
+  <div class="modal-overlay" id="add-photo-modal">
+    <div class="modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="font-size: 1.3rem;">Upload Restaurant Photo</h3>
+        <button onclick="closePhotoModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+      </div>
+
+      <form id="add-photo-form" onsubmit="handlePhotoSave(event)">
+        <div class="form-group">
+          <label class="form-label">Photo Title / Caption *</label>
+          <input type="text" id="photo-title" class="form-control" placeholder="e.g. Mountain View Dining Terrace" required>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label class="form-label">Category *</label>
+            <select id="photo-category" class="form-control" required>
+              <option value="Exterior & Entrance">Exterior &amp; Entrance</option>
+              <option value="Dining & Ambience" selected>Dining &amp; Ambience</option>
+              <option value="Pure Veg Dishes">Pure Veg Dishes</option>
+              <option value="Tandoor & Kitchen">Tandoor &amp; Kitchen</option>
+              <option value="Branding & Logo">Branding &amp; Logo</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Source Attribution</label>
+            <select id="photo-source" class="form-control">
+              <option value="Official Instagram (@rock_and_stone_restraunt)">Official Instagram (@rock_and_stone_restraunt)</option>
+              <option value="Restaurant Owner Direct Upload">Restaurant Owner Direct Upload</option>
+              <option value="Preview Mockup (Awaiting Owner Media)">Preview Mockup (Awaiting Owner Media)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Descriptive Alt Text (For Accessibility &amp; SEO) *</label>
+          <input type="text" id="photo-alt" class="form-control" placeholder="Detailed description of what is shown in the image" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Select Photo File / Image</label>
+          <input type="file" id="photo-file" class="form-control" accept="image/*">
+          <small style="color: var(--stone-500); display: block; margin-top: 4px;">PNG, JPG, or WEBP up to 5MB.</small>
+        </div>
+
+        <div style="background: var(--cream-100); padding: 12px; border-radius: var(--radius-md); font-size: 0.82rem; color: var(--stone-700); margin-bottom: 20px;">
+          <input type="checkbox" id="photo-veg-check" required checked>
+          <label for="photo-veg-check" style="font-weight: 700; color: var(--pure-veg-green); margin-left: 6px;">
+            I confirm this media strictly represents 100% Pure Vegetarian cuisine or premises.
+          </label>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+          <button type="button" class="btn btn-outline" onclick="closePhotoModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save to Gallery</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    const DEFAULT_GALLERY = [
+      {
+        id: 'gal-01',
+        title: 'Sunset Terrace Dining',
+        category: 'Dining & Ambience',
+        image: '../assets/images/hero-himalayas.jpg',
+        alt: 'Open air stone terrace dining with panoramic view of Dhauladhar mountain peaks in Kangra',
+        source: 'Preview Representation (Awaiting Owner Instagram Media)',
+        is_authentic_verified: false
+      },
+      {
+        id: 'gal-02',
+        title: 'Kangra Pure Veg Thali & Brass Katoris',
+        category: 'Pure Veg Dishes',
+        image: '../assets/images/pure-veg-thali.jpg',
+        alt: 'Authentic pure vegetarian Himachali Dham dishes including Sepu Vadi, Kangra Madra and Dal Makhani',
+        source: 'Preview Representation (Awaiting Owner Instagram Media)',
+        is_authentic_verified: false
+      },
+      {
+        id: 'gal-03',
+        title: 'Clay Tandoor Roasted Paneer Tikka',
+        category: 'Pure Veg Dishes',
+        image: '../assets/images/paneer-tikka.jpg',
+        alt: 'Charred paneer tikka roasted in traditional clay tandoor on slate stone platter',
+        source: 'Preview Representation (Awaiting Owner Instagram Media)',
+        is_authentic_verified: false
+      },
+      {
+        id: 'gal-04',
+        title: 'Official SBI Merchant Standee (TID: SB797564)',
+        category: 'Branding & Logo',
+        image: '../assets/images/sbi-merchant-qr.png',
+        alt: 'Official SBI Payments merchant standee for Rock and Stone Restraunt with static UPI QR code',
+        source: 'Authentic Restaurant Owner Asset (Verified)',
+        is_authentic_verified: true
+      }
+    ];
+
+    let galleryItems = JSON.parse(localStorage.getItem('rs_gallery_db') || 'null');
+    if (!galleryItems) {
+      galleryItems = DEFAULT_GALLERY;
+      localStorage.setItem('rs_gallery_db', JSON.stringify(galleryItems));
+    }
+
+    function saveGallery() {
+      localStorage.setItem('rs_gallery_db', JSON.stringify(galleryItems));
+      renderAdminGallery();
+    }
+
+    function renderAdminGallery() {
+      const container = document.getElementById('gallery-admin-container');
+      container.innerHTML = galleryItems.map((item, idx) => `
+        <div class="gallery-card-admin">
+          <img src="${item.image}" alt="${item.alt}" class="gallery-card-img">
+          <div class="gallery-card-body">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                <strong style="color: var(--stone-900); font-size: 1rem;">${item.title}</strong>
+                <span style="font-size: 0.72rem; background: var(--cream-200); padding: 2px 8px; border-radius: var(--radius-full); font-weight: 700;">
+                  ${item.category}
+                </span>
+              </div>
+              <p style="font-size: 0.8rem; color: var(--stone-600); margin-bottom: 8px;">${item.alt}</p>
+              <div style="font-size: 0.75rem; color: ${item.is_authentic_verified ? '#166534' : '#b45309'}; font-weight: 700;">
+                ${item.is_authentic_verified ? '✓ Authentic Owner Asset' : '⏳ Preview Representation'}
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 14px; border-top: 1px solid var(--border-light); padding-top: 10px;">
+              <div>
+                ${idx > 0 ? `<button class="btn btn-outline btn-sm" style="padding: 2px 6px;" onclick="moveItem(${idx}, -1)">↑</button>` : ''}
+                ${idx < galleryItems.length - 1 ? `<button class="btn btn-outline btn-sm" style="padding: 2px 6px;" onclick="moveItem(${idx}, 1)">↓</button>` : ''}
+              </div>
+              <button class="btn btn-outline btn-sm" style="color: #b91c1c; border-color: #fca5a5; padding: 2px 8px;" onclick="deleteItem(${idx})">
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function moveItem(idx, dir) {
+      const target = idx + dir;
+      if (target >= 0 && target < galleryItems.length) {
+        const temp = galleryItems[idx];
+        galleryItems[idx] = galleryItems[target];
+        galleryItems[target] = temp;
+        saveGallery();
+      }
+    }
+
+    function deleteItem(idx) {
+      if (confirm(`Remove "${galleryItems[idx].title}" from gallery?`)) {
+        galleryItems.splice(idx, 1);
+        saveGallery();
+        ROCK_STONE.showToast('Photo removed from gallery', 'info');
+      }
+    }
+
+    function openAddPhotoModal() {
+      document.getElementById('add-photo-modal').classList.add('active');
+    }
+
+    function closePhotoModal() {
+      document.getElementById('add-photo-modal').classList.remove('active');
+    }
+
+    function handlePhotoSave(e) {
+      e.preventDefault();
+      const title = document.getElementById('photo-title').value.trim();
+      const category = document.getElementById('photo-category').value;
+      const source = document.getElementById('photo-source').value;
+      const alt = document.getElementById('photo-alt').value.trim();
+      const fileInput = document.getElementById('photo-file');
+
+      let imageUrl = '../assets/images/hero-himalayas.jpg';
+
+      if (fileInput.files && fileInput.files[0]) {
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          galleryItems.unshift({
+            id: 'gal-' + Date.now(),
+            title: title,
+            category: category,
+            source: source,
+            alt: alt,
+            image: evt.target.result,
+            is_authentic_verified: source.includes('Owner') || source.includes('Instagram')
+          });
+          saveGallery();
+          closePhotoModal();
+          ROCK_STONE.showToast('Authentic photo added to gallery!', 'success');
+        };
+        reader.readAsDataURL(file);
+      } else {
+        galleryItems.unshift({
+          id: 'gal-' + Date.now(),
+          title: title,
+          category: category,
+          source: source,
+          alt: alt,
+          image: imageUrl,
+          is_authentic_verified: false
+        });
+        saveGallery();
+        closePhotoModal();
+        ROCK_STONE.showToast('Photo record saved to gallery', 'success');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', renderAdminGallery);
+  </script>
+</body>
+</html>
