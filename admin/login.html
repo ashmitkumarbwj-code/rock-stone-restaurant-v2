@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff &amp; Admin Login | Rock & Stone Restaurant</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <style>
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--pine-900) 0%, var(--stone-900) 100%);
+      padding: 24px;
+    }
+    .login-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 44px 36px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: var(--shadow-xl);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <div class="login-card">
+      <div style="text-align: center; margin-bottom: 28px;">
+        <div class="brand-logo-mark" style="margin: 0 auto 12px; width: 56px; height: 56px; font-size: 1.6rem;">R&amp;S</div>
+        <h2 style="font-size: 1.5rem; color: var(--pine-900);">Staff Portal</h2>
+        <span class="brand-sub" style="color: var(--terracotta-600); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700;">Rock &amp; Stone Management</span>
+      </div>
+
+      <div style="background: var(--cream-100); border: 1px solid var(--border-medium); padding: 12px; border-radius: var(--radius-md); font-size: 0.8rem; color: var(--stone-600); margin-bottom: 22px;">
+        🔒 Authorized personnel only. Role-based access controls active.
+      </div>
+
+      <form id="admin-login-form" onsubmit="handleAdminLogin(event)">
+        <div class="form-group">
+          <label class="form-label">Staff Email / Username</label>
+          <input type="email" id="login-email" class="form-control" placeholder="staff@rockstone.com" required value="admin@rockstone.com">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" id="login-password" class="form-control" placeholder="••••••••" required value="himalaya2026">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Role</label>
+          <select id="login-role" class="form-control">
+            <option value="admin">Administrator / Owner</option>
+            <option value="kitchen_staff">Kitchen Display Staff</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 10px;">
+          Authenticate &amp; Enter &rarr;
+        </button>
+      </form>
+
+      <div style="text-align: center; margin-top: 24px;">
+        <a href="../index.html" style="font-size: 0.85rem; color: var(--stone-500); text-decoration: underline;">
+          &larr; Return to Public Website
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const role = document.getElementById('login-role').value;
+
+      // Set session token
+      const session = {
+        email: email,
+        role: role,
+        token: 'AUTH-' + Date.now(),
+        logged_in_at: new Date().toISOString()
+      };
+      sessionStorage.setItem('rs_admin_session', JSON.stringify(session));
+
+      ROCK_STONE.showToast(`Logged in as ${role.toUpperCase()}`, 'success');
+
+      setTimeout(() => {
+        if (role === 'kitchen_staff') {
+          window.location.href = 'kitchen.html';
+        } else {
+          window.location.href = 'index.html';
+        }
+      }, 500);
+    }
+  </script>
+</body>
+</html>
